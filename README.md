@@ -5,13 +5,13 @@ A powerful Flutter application that streamlines the build and deployment process
 ## 📱 Screenshots
 
 ### Project Selection & Build Configuration
-![Project Selection](./screenshots/Screenshot%202024-11-24%20at%205.45.08%20PM.png)
+![Project Selection](./screenshots/ss1.png)
 
 ### Build Process
-![Build Process](./screenshots/Screenshot%202024-11-24%20at%205.46.03%20PM.png)
+![Build Process](./screenshots/ss2.png)
 
 ### Build Output
-![Build Output](./screenshots/Screenshot%202024-11-24%20at%205.46.47%20PM.png)
+![Build Output](./screenshots/ss3.png)
 
 ## ✨ Features
 
@@ -58,8 +58,6 @@ A powerful Flutter application that streamlines the build and deployment process
 - Flutter SDK (latest version)
 - Xcode (for iOS builds)
 - Android Studio (for Android builds)
-
-### Installation
 
 
 ## 🛠️ Usage
