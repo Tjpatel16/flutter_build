@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/theme/theme_toggle_button.dart';
 import 'project_history_sidebar.dart';
+import 'version_info.dart';
 
 class ProjectSidebar extends StatelessWidget {
   const ProjectSidebar({super.key});
@@ -22,6 +23,7 @@ class ProjectSidebar extends StatelessWidget {
         children: [
           Expanded(child: ProjectHistorySidebar()),
           ThemeToggleButton(),
+          VersionInfo(),
         ],
       ),
     );

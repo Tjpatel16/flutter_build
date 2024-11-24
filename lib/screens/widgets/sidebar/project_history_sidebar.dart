@@ -280,27 +280,11 @@ class _ProjectHistoryTile extends ConsumerWidget {
   }
 
   String _shortenPath(String path) {
-    const maxLength = 50;
-    if (path.length <= maxLength) return path;
-
     final parts = path.split('/');
     if (parts.length <= 2) return path;
 
-    String shortened = '${parts.first}/.../${parts.last}';
-    int remainingLength = maxLength - shortened.length;
-
-    if (remainingLength > 0) {
-      final middleParts = parts.sublist(1, parts.length - 1);
-      for (final part in middleParts) {
-        if (part.length + 1 <= remainingLength) {
-          shortened = shortened.replaceFirst('...', '...$part');
-          remainingLength -= part.length + 1;
-        } else {
-          break;
-        }
-      }
-    }
-
-    return shortened;
+    // Only show last two parts
+    final lastTwo = parts.sublist(parts.length - 2);
+    return '.../${lastTwo.join('/')}';
   }
 }

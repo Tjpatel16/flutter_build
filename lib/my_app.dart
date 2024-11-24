@@ -4,14 +4,28 @@ import 'package:flutter_build/screens/pages/splash_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_build/screens/pages/home_page.dart';
 import 'package:toastification/toastification.dart';
+import 'services/version_service.dart';
 
 import 'providers/theme_provider.dart';
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      VersionService.checkForUpdates();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
     final themeColor = ref.watch(themeColorProvider);
     final isSplashPage = ref.watch(splashProvider);

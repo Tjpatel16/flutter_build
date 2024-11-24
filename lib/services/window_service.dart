@@ -3,6 +3,8 @@ import 'package:window_manager/window_manager.dart';
 import 'dart:io';
 
 class WindowService {
+  static const String appName = 'Flutter Build';
+
   static Future<void> initializeWindow() async {
     if (!_isDesktopPlatform) return;
 
@@ -13,7 +15,7 @@ class WindowService {
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
-      title: 'Flutter Build',
+      title: appName,
     );
 
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -40,5 +42,9 @@ class WindowService {
   }
 
   static bool get _isDesktopPlatform =>
-      Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+      Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
+
+
+
 }

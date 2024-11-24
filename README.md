@@ -1,16 +1,76 @@
-# flutter_build
+# Flutter Build
 
-A new Flutter project.
+A powerful Flutter application that streamlines the build and deployment process for your Flutter projects.
 
-## Getting Started
+## 📱 Screenshots
 
-This project is a starting point for a Flutter application.
+### Project Selection & Build Configuration
+![Project Selection](./screenshots/Screenshot%202024-11-24%20at%205.45.08%20PM.png)
 
-A few resources to get you started if this is your first Flutter project:
+### Build Process
+![Build Process](./screenshots/Screenshot%202024-11-24%20at%205.46.03%20PM.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Build Output
+![Build Output](./screenshots/Screenshot%202024-11-24%20at%205.46.47%20PM.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ✨ Features
+
+### 🚀 Build Management
+- Cross-platform build support (iOS, Android, Web)
+- Platform-specific build configurations
+- iOS IPA builds (macOS only)
+- Android APK and App Bundle generation
+- Web application builds
+- Multiple build modes (Debug, Release, Profile)
+
+### 🔄 Project History
+- Track all your previous builds
+- View build timestamps and configurations
+- Quick access to recent projects
+- Build status monitoring
+- Detailed build logs
+
+### 🎨 User Interface
+- Modern, intuitive design
+- Real-time build progress
+- Interactive terminal output
+- Dark and light theme support
+- Responsive layout for all screen sizes
+
+### ⚡ Performance
+- Fast build process
+- Efficient dependency management
+- Optimized build configurations
+- Parallel build support
+- Minimal resource usage
+
+### 🛠️ Developer Tools
+- Version management
+- Build configuration presets
+- Project validation
+- Error handling and reporting
+- Build output organization
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK (latest version)
+- Xcode (for iOS builds)
+- Android Studio (for Android builds)
+
+### Installation
+
+
+## 🛠️ Usage
+
+1. Open the app
+2. Select or create a new Flutter project
+3. Configure build settings
+4. Start the build process
+5. Monitor build progress
+6. Access build history for previous builds
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

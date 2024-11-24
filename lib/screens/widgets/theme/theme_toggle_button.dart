@@ -12,51 +12,110 @@ class ThemeToggleButton extends ConsumerWidget {
     final themeColor = ref.watch(themeColorProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: colorScheme.outlineVariant,
-          ),
-        ),
-      ),
-      child: ListTile(
-        leading: Icon(
-          switch (themeMode) {
-            ThemeMode.system => Icons.brightness_auto,
-            ThemeMode.light => Icons.light_mode,
-            ThemeMode.dark => Icons.dark_mode,
-          },
-          color: colorScheme.primary,
-        ),
-        title: TextWidget(
-          switch (themeMode) {
-            ThemeMode.system => 'System Theme',
-            ThemeMode.light => 'Light Theme',
-            ThemeMode.dark => 'Dark Theme',
-          },
-          color: colorScheme.primary,
-        ),
-        trailing: Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: themeColor,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: colorScheme.outline,
-              width: 2,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Divider(height: 1),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const _ThemeDialog(),
+                );
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color:
+                                colorScheme.primaryContainer.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Icon(
+                            switch (themeMode) {
+                              ThemeMode.system => Icons.brightness_auto,
+                              ThemeMode.light => Icons.light_mode,
+                              ThemeMode.dark => Icons.dark_mode,
+                            },
+                            color: colorScheme.primary,
+                            size: 22,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              TextWidget(
+                                switch (themeMode) {
+                                  ThemeMode.system => 'System Theme',
+                                  ThemeMode.light => 'Light Theme',
+                                  ThemeMode.dark => 'Dark Theme',
+                                },
+                                color: colorScheme.onSurface,
+                                weight: FontWeight.w600,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: themeColor,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: themeColor.withOpacity(0.3),
+                                      blurRadius: 4,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          TextWidget(
+                            'Customize app appearance',
+                            color: colorScheme.onSurfaceVariant,
+                            size: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => const _ThemeDialog(),
-          );
-        },
-      ),
+      ],
     );
   }
 }

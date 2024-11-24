@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,23 +71,26 @@ class BuildTypeSelection extends ConsumerWidget {
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: AppBuildType.values
-                .map((type) => SizedBox(
-                      width: 230,
-                      child: BuildOptionCard(
-                        isSelected: selectedBuildType == type,
-                        icon: _getIconForBuildType(type),
-                        title: type.title,
-                        description: type.description,
-                        onTap: isEnabled && selectedBuildType != type
-                            ? () {
-                                ref.read(appBuildTypeProvider.notifier).state =
-                                    type;
-                              }
-                            : null,
-                      ),
-                    ))
-                .toList(),
+            children: AppBuildType.values.map((type) {
+              final bool isMacOS = Platform.isMacOS;
+              final bool canSelectIOS =
+                  type == AppBuildType.iosIpa ? isMacOS : true;
+
+              return SizedBox(
+                width: 230,
+                child: BuildOptionCard(
+                  isSelected: selectedBuildType == type,
+                  icon: _getIconForBuildType(type),
+                  title: type.title,
+                  description: type.description,
+                  onTap: isEnabled && canSelectIOS && selectedBuildType != type
+                      ? () {
+                          ref.read(appBuildTypeProvider.notifier).state = type;
+                        }
+                      : null,
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
