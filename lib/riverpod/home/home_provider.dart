@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 import '../../services/storage_service.dart';
@@ -19,8 +20,15 @@ final homeProvider = AsyncNotifierProvider<HomeNotifier, HomeState>(() {
 class HomeNotifier extends AsyncNotifier<HomeState> {
   @override
   Future<HomeState> build() async {
-    await StorageService.initialize();
-    return const HomeState();
+    try {
+      debugPrint('Initializing storage service...');
+      await StorageService.initialize();
+      debugPrint('Storage service initialized');
+      return const HomeState();
+    } catch (e) {
+      debugPrint('Error in home provider build: $e');
+      return const HomeState();
+    }
   }
 
   Future<void> pickFlutterProject() async {
@@ -52,7 +60,7 @@ class HomeNotifier extends AsyncNotifier<HomeState> {
       if (isValid) {
         await ref
             .read(projectHistoryProvider.notifier)
-            .addProject(projectPath, projectName);
+            .addProject(projectPath);
         await ref.read(versionInfoProvider.notifier).loadVersion(projectPath);
       }
 

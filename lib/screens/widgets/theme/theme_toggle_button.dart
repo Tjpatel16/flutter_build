@@ -205,7 +205,7 @@ class _ThemeDialog extends ConsumerWidget {
               ],
               selected: {themeMode},
               onSelectionChanged: (Set<ThemeMode> selected) {
-                ref.read(themeProvider.notifier).setThemeMode(selected.first);
+                ref.read(themeProvider.notifier).changeTheme(selected.first);
               },
               showSelectedIcon: true,
             ),
@@ -226,7 +226,7 @@ class _ThemeDialog extends ConsumerWidget {
                   for (final color in _availableColors)
                     InkWell(
                       onTap: () {
-                        ref.read(themeColorProvider.notifier).setColor(color);
+                        ref.read(themeColorProvider.notifier).changeColor(color);
                       },
                       borderRadius: BorderRadius.circular(12),
                       child: Container(

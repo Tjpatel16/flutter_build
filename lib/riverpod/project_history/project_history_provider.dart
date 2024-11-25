@@ -1,42 +1,52 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../models/project_history.dart';
 import '../../services/history_service.dart';
-import '../../services/storage_service.dart';
-import 'project_history_state.dart';
 
-final historyServiceProvider = Provider((ref) => HistoryService());
+final projectHistoryProvider =
+    AsyncNotifierProvider<ProjectHistoryNotifier, ProjectHistoryState>(
+        () => ProjectHistoryNotifier());
 
-final projectHistoryProvider = AsyncNotifierProvider<ProjectHistoryNotifier, ProjectHistoryState>(() {
-  return ProjectHistoryNotifier();
-});
+class ProjectHistoryState {
+  final List<ProjectHistory> recentProjects;
+
+  const ProjectHistoryState({
+    required this.recentProjects,
+  });
+}
 
 class ProjectHistoryNotifier extends AsyncNotifier<ProjectHistoryState> {
-  late final HistoryService _historyService;
-
   @override
   Future<ProjectHistoryState> build() async {
-    await StorageService.initialize();
-    _historyService = ref.read(historyServiceProvider);
-    return ProjectHistoryState(recentProjects: _historyService.getRecentProjects());
+    return ProjectHistoryState(
+      recentProjects: HistoryService.getProjects(),
+    );
   }
 
-  Future<void> addProject(String projectPath, String projectName) async {
-    await _historyService.addProject(projectPath, projectName);
-    state = AsyncData(state.value!.copyWith(
-      recentProjects: _historyService.getRecentProjects(),
-    ));
+  Future<void> addProject(String projectPath) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await HistoryService.addProject(projectPath);
+      return ProjectHistoryState(
+        recentProjects: HistoryService.getProjects(),
+      );
+    });
   }
 
   Future<void> removeProject(String path) async {
-    await _historyService.removeProject(path);
-    state = AsyncData(state.value!.copyWith(
-      recentProjects: _historyService.getRecentProjects(),
-    ));
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await HistoryService.removeProject(path);
+      return ProjectHistoryState(
+        recentProjects: HistoryService.getProjects(),
+      );
+    });
   }
 
   Future<void> clearHistory() async {
-    await _historyService.clearHistory();
-    state = AsyncData(state.value!.copyWith(
-      recentProjects: [],
-    ));
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await HistoryService.clearHistory();
+      return const ProjectHistoryState(recentProjects: []);
+    });
   }
 }

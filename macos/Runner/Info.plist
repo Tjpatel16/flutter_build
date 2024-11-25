@@ -28,5 +28,27 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Access is required to read and write project files</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Access is required to manage downloaded files</string>
+	<key>NSFileProviderPresenceUsageDescription</key>
+	<string>Access is required to read project configuration files</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Access is required to read and write files on network volumes</string>
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>LSEnvironment</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
 </dict>
 </plist>

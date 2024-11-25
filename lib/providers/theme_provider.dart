@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
 
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier();
+final themeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+  return ThemeModeNotifier();
 });
 
 final themeColorProvider = StateNotifierProvider<ThemeColorNotifier, Color>((ref) {
@@ -11,42 +11,52 @@ final themeColorProvider = StateNotifierProvider<ThemeColorNotifier, Color>((ref
 });
 
 class ThemeColorNotifier extends StateNotifier<Color> {
-  ThemeColorNotifier() : super(_loadThemeColor());
+  ThemeColorNotifier() : super(_loadSavedColor());
 
-  static Color _loadThemeColor() {
-    final savedColor = StorageService.settings.get('themeColor');
-    if (savedColor == null) return Colors.blue;
-    return Color(savedColor);
+  static Color _loadSavedColor() {
+    try {
+      final savedColor = StorageService.settings?.get('themeColor');
+      if (savedColor != null) {
+        return Color(savedColor as int);
+      }
+    } catch (e) {
+      debugPrint('Error loading theme color: $e');
+    }
+    return Colors.blue;
   }
 
-  void setColor(Color color) {
-    state = color;
-    StorageService.settings.put('themeColor', color.value);
+  void changeColor(Color color) {
+    try {
+      StorageService.settings?.put('themeColor', color.value);
+      state = color;
+    } catch (e) {
+      debugPrint('Error saving theme color: $e');
+    }
   }
 }
 
-class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(_loadThemeMode());
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  ThemeModeNotifier() : super(_loadSavedThemeMode());
 
-  static ThemeMode _loadThemeMode() {
-    final savedMode = StorageService.settings.get('themeMode', defaultValue: 'system');
-    return ThemeMode.values.firstWhere(
-      (mode) => mode.name == savedMode,
-      orElse: () => ThemeMode.system,
-    );
+  static ThemeMode _loadSavedThemeMode() {
+    try {
+      final savedMode = StorageService.settings?.get('themeMode', defaultValue: 'system') as String?;
+      return ThemeMode.values.firstWhere(
+        (mode) => mode.name == savedMode,
+        orElse: () => ThemeMode.system,
+      );
+    } catch (e) {
+      debugPrint('Error loading theme mode: $e');
+      return ThemeMode.system;
+    }
   }
 
-  void setThemeMode(ThemeMode mode) {
-    state = mode;
-    StorageService.settings.put('themeMode', mode.name);
-  }
-
-  void toggleTheme() {
-    final nextMode = switch (state) {
-      ThemeMode.system => ThemeMode.light,
-      ThemeMode.light => ThemeMode.dark,
-      ThemeMode.dark => ThemeMode.system,
-    };
-    setThemeMode(nextMode);
+  void changeTheme(ThemeMode mode) {
+    try {
+      StorageService.settings?.put('themeMode', mode.name);
+      state = mode;
+    } catch (e) {
+      debugPrint('Error saving theme mode: $e');
+    }
   }
 }
