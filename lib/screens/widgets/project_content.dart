@@ -47,7 +47,7 @@ class ProjectContent extends ConsumerWidget {
             const ProjectSelection(),
             const SizedBox(height: 24),
             Opacity(
-              opacity: state.selectedProjectPath != null ? 1.0 : 0.5,
+              opacity: state.isValidProject ? 1.0 : 0.5,
               child: AbsorbPointer(
                 absorbing: state.selectedProjectPath == null,
                 child: const Column(

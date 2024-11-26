@@ -44,9 +44,13 @@ class ProjectSelection extends ConsumerWidget {
       data: (state) => Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: state.selectedProjectPath != null && !state.isValidProject
+              ? colorScheme.error.withOpacity(0.05)
+              : colorScheme.surface,
           border: Border.all(
-            color: colorScheme.outline.withOpacity(0.5),
+            color: state.selectedProjectPath != null && !state.isValidProject
+                ? colorScheme.error
+                : colorScheme.outline.withOpacity(0.5),
           ),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -55,6 +59,7 @@ class ProjectSelection extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   alignment: Alignment.center,
@@ -63,18 +68,27 @@ class ProjectSelection extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer.withOpacity(0.2),
+                        color: state.selectedProjectPath != null &&
+                                !state.isValidProject
+                            ? colorScheme.error.withOpacity(0.1)
+                            : colorScheme.primaryContainer.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.all(8),
                       child: Icon(
-                        state.projectName != null
-                            ? Icons.folder_open_rounded
-                            : Icons.create_new_folder_rounded,
+                        state.selectedProjectPath != null &&
+                                !state.isValidProject
+                            ? Icons.folder_off_rounded
+                            : state.projectName != null
+                                ? Icons.folder_open_rounded
+                                : Icons.create_new_folder_rounded,
                         size: 22,
-                        color: colorScheme.primary,
+                        color: state.selectedProjectPath != null &&
+                                !state.isValidProject
+                            ? colorScheme.error
+                            : colorScheme.primary,
                       ),
                     ),
                   ],
@@ -94,12 +108,30 @@ class ProjectSelection extends ConsumerWidget {
                         color: colorScheme.onSurface,
                       ),
                       const SizedBox(height: 4),
-                      TextWidget(
-                        state.selectedProjectPath ?? 'Select a Flutter project to begin',
-                        size: 13,
-                        color: colorScheme.onSurfaceVariant,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextWidget(
+                            state.selectedProjectPath ??
+                                'Select a Flutter project to begin',
+                            size: 13,
+                            color: colorScheme.onSurfaceVariant,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (state.selectedProjectPath != null &&
+                              !state.isValidProject) ...[
+                            const SizedBox(height: 4),
+                            TextWidget(
+                              'Invalid Flutter project folder',
+                              size: 13,
+                              color: colorScheme.error,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
@@ -107,7 +139,8 @@ class ProjectSelection extends ConsumerWidget {
                 const SizedBox(width: 16),
                 FilledButton.icon(
                   onPressed: isEnabled
-                      ? () => ref.read(homeProvider.notifier).pickFlutterProject()
+                      ? () =>
+                          ref.read(homeProvider.notifier).pickFlutterProject()
                       : null,
                   icon: Icon(
                     Icons.add_rounded,

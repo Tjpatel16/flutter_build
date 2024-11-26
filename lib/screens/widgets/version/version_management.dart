@@ -35,7 +35,10 @@ class VersionManagement extends ConsumerWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
@@ -74,7 +77,7 @@ class VersionManagement extends ConsumerWidget {
           const SizedBox(height: 24),
           homeState.when(
             data: (home) {
-              if (home.selectedProjectPath == null) {
+              if (home.selectedProjectPath == null || !home.isValidProject) {
                 return const Center(
                   child: TextWidget(
                     'Select a project to manage its version',
@@ -82,6 +85,7 @@ class VersionManagement extends ConsumerWidget {
                   ),
                 );
               }
+
               return versionState.when(
                 data: (version) => Form(
                   child: Row(
