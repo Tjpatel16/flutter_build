@@ -4,7 +4,6 @@ import '../../riverpod/home/home_provider.dart';
 import '../../riverpod/version/version_provider.dart';
 import 'build_mode/build_mode_selection.dart';
 import 'build_type/build_type_selection.dart';
-import 'flutter_info/flutter_info_section.dart';
 import 'project_selection.dart';
 import 'start_build_button.dart';
 import 'terminal/terminal_view.dart';
@@ -45,8 +44,6 @@ class ProjectContent extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const FlutterInfoSection(),
-            const SizedBox(height: 24),
             const ProjectSelection(),
             const SizedBox(height: 24),
             Opacity(
@@ -63,12 +60,12 @@ class ProjectContent extends ConsumerWidget {
                     BuildModeSelection(),
                     SizedBox(height: 24),
                     StartBuildButton(),
+                    SizedBox(height: 24),
+                    TerminalView(),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            const TerminalView(),
           ],
         ),
       ),

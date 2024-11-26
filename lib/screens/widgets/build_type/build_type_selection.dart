@@ -45,27 +45,48 @@ class BuildTypeSelection extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.build_outlined,
-                size: 20,
-                color: Theme.of(context).colorScheme.primary,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.build_outlined,
+                      size: 22,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              const TextWidget(
-                'Build Type',
-                size: 18,
-                weight: FontWeight.w600,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const TextWidget(
+                      'Build Type',
+                      size: 16,
+                      weight: FontWeight.w600,
+                    ),
+                    const SizedBox(height: 4),
+                    TextWidget(
+                      'Choose the type of build you want to create',
+                      size: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: TextWidget(
-              'Choose the type of build you want to create',
-              size: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
           ),
           const SizedBox(height: 16),
           Wrap(

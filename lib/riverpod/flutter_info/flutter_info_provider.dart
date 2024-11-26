@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'flutter_info_state.dart';
-import 'dart:io';
+import 'dart:async';
+import 'package:flutter_build/services/flutter_path_service.dart';
 
 final flutterInfoProvider =
     AsyncNotifierProvider<FlutterInfoNotifier, FlutterInfoState>(
@@ -8,6 +9,8 @@ final flutterInfoProvider =
 );
 
 class FlutterInfoNotifier extends AsyncNotifier<FlutterInfoState> {
+  final _flutterService = FlutterPathService();
+
   @override
   Future<FlutterInfoState> build() async {
     return _fetchVersions();
@@ -15,32 +18,37 @@ class FlutterInfoNotifier extends AsyncNotifier<FlutterInfoState> {
 
   Future<FlutterInfoState> _fetchVersions() async {
     try {
-      final flutterVersion = await _getFlutterVersion();
-      final dartVersion = await _getDartVersion();
+      final info = await _flutterService.getFlutterInfo();
+
+      if (info.containsKey('error')) {
+        return const FlutterInfoState(
+          flutterVersion: 'Not found',
+          dartVersion: 'Not found',
+          isFlutterAvailable: false,
+        );
+      }
+
+      // Parse version string to extract Flutter and Dart versions
+      final versionString = info['version'] ?? '';
+      final flutterVersion = RegExp(r'Flutter (\d+\.\d+\.\d+)')
+              .firstMatch(versionString)
+              ?.group(1) ??
+          'Unknown';
+      final dartVersion =
+          RegExp(r'Dart (\d+\.\d+\.\d+)').firstMatch(versionString)?.group(1) ??
+              'Unknown';
+
       return FlutterInfoState(
         flutterVersion: flutterVersion,
         dartVersion: dartVersion,
+        isFlutterAvailable: true,
       );
     } catch (e) {
-      throw Exception('Failed to fetch versions: $e');
-    }
-  }
-
-  Future<String> _getFlutterVersion() async {
-    try {
-      final result = await Process.run('flutter', ['--version']);
-      return result.stdout.toString().trim();
-    } catch (e) {
-      throw Exception('Flutter version not found: $e');
-    }
-  }
-
-  Future<String> _getDartVersion() async {
-    try {
-      final result = await Process.run('dart', ['--version']);
-      return result.stdout.toString().trim();
-    } catch (e) {
-      throw Exception('Dart version not found: $e');
+      return FlutterInfoState(
+        flutterVersion: "Not found",
+        dartVersion: "Not found",
+        isFlutterAvailable: false,
+      );
     }
   }
 

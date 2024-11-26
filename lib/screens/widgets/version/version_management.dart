@@ -28,27 +28,48 @@ class VersionManagement extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.swap_vert,
-                size: 20,
-                color: Theme.of(context).colorScheme.primary,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.swap_vert,
+                      size: 22,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              const TextWidget(
-                'Version Management',
-                size: 18,
-                weight: FontWeight.w600,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const TextWidget(
+                      'Version Management',
+                      size: 16,
+                      weight: FontWeight.w600,
+                    ),
+                    const SizedBox(height: 4),
+                    TextWidget(
+                      'Manage your app version and build number',
+                      size: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: TextWidget(
-              'Manage your app version and build number',
-              size: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
           ),
           const SizedBox(height: 24),
           homeState.when(

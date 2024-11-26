@@ -1,10 +1,15 @@
 {
   "title": "Flutter Build",
-  "icon": "macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png",
-  "background": "macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png",
-  "icon-size": 80,
+  "icon": "/Users/tj/FlutterProjects/FlutterBuild/flutter_build/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png",
   "contents": [
     { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
     { "x": 192, "y": 344, "type": "file", "path": "build/macos/Build/Products/Release/Flutter Build.app" }
-  ]
+  ],
+  "icon-size": 80,
+  "window": {
+    "size": {
+      "width": 640,
+      "height": 480
+    }
+  }
 }

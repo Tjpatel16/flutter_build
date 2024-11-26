@@ -133,9 +133,6 @@ class ProjectHistorySidebar extends ConsumerWidget {
                 ],
               ),
             ),
-            const Divider(
-              height: 0,
-            ),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),

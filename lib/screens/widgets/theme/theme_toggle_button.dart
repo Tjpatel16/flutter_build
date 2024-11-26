@@ -15,7 +15,6 @@ class ThemeToggleButton extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Divider(height: 1),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Material(
@@ -226,7 +225,9 @@ class _ThemeDialog extends ConsumerWidget {
                   for (final color in _availableColors)
                     InkWell(
                       onTap: () {
-                        ref.read(themeColorProvider.notifier).changeColor(color);
+                        ref
+                            .read(themeColorProvider.notifier)
+                            .changeColor(color);
                       },
                       borderRadius: BorderRadius.circular(12),
                       child: Container(

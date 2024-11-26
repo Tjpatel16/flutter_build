@@ -38,7 +38,6 @@ class _VersionInfoState extends State<VersionInfo> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Divider(height: 1),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Padding(
