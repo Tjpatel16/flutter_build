@@ -6,6 +6,7 @@ class BuildOptionCard extends StatelessWidget {
   final String description;
   final IconData icon;
   final bool isSelected;
+  final bool isEnabled;
   final VoidCallback? onTap;
 
   const BuildOptionCard({
@@ -15,6 +16,7 @@ class BuildOptionCard extends StatelessWidget {
     required this.icon,
     required this.isSelected,
     required this.onTap,
+    this.isEnabled = true,
   });
 
   @override
@@ -23,20 +25,24 @@ class BuildOptionCard extends StatelessWidget {
 
     return Card(
       elevation: 0,
-      color: isSelected
-          ? theme.colorScheme.primaryContainer
-          : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      color: !isEnabled
+          ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
+          : isSelected
+              ? theme.colorScheme.primaryContainer
+              : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.outline.withOpacity(0.2),
+          color: !isEnabled
+              ? theme.colorScheme.outline.withOpacity(0.1)
+              : isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.outline.withOpacity(0.2),
           width: 1,
         ),
       ),
       child: InkWell(
-        onTap: onTap,
+        onTap: isEnabled ? onTap : null,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(14),
@@ -49,17 +55,22 @@ class BuildOptionCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.primary.withOpacity(0.1),
+                      color: !isEnabled
+                          ? theme.colorScheme.surfaceContainerHighest
+                              .withOpacity(0.2)
+                          : isSelected
+                              ? theme.colorScheme.primary.withOpacity(0.2)
+                              : theme.colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       icon,
                       size: 20,
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
+                      color: !isEnabled
+                          ? theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+                          : isSelected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -72,9 +83,12 @@ class BuildOptionCard extends StatelessWidget {
                           title,
                           size: 14,
                           weight: FontWeight.w600,
-                          color: isSelected
-                              ? theme.colorScheme.onPrimaryContainer
-                              : theme.colorScheme.onSurface,
+                          color: !isEnabled
+                              ? theme.colorScheme.onSurfaceVariant
+                                  .withOpacity(0.5)
+                              : isSelected
+                                  ? theme.colorScheme.onPrimaryContainer
+                                  : theme.colorScheme.onSurface,
                         ),
                         const SizedBox(height: 4),
                         Tooltip(
@@ -84,9 +98,12 @@ class BuildOptionCard extends StatelessWidget {
                             size: 12,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            color: isSelected
-                                ? theme.colorScheme.onPrimaryContainer
-                                : theme.colorScheme.onSurfaceVariant,
+                            color: !isEnabled
+                                ? theme.colorScheme.onSurfaceVariant
+                                    .withOpacity(0.5)
+                                : isSelected
+                                    ? theme.colorScheme.onPrimaryContainer
+                                    : theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
