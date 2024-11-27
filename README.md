@@ -14,6 +14,13 @@ A powerful Flutter application that streamlines the build and deployment process
   <img src="./screenshots/ss3.png" width="280" alt="Build Output" />
 </p>
 
+## 📥 Download
+
+Download and install the appropriate package for your operating system:
+- macOS: [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
+- Windows: Coming soon
+- Linux: Coming soon
+
 ## ✨ Features
 
 ### 🚀 Build Management
