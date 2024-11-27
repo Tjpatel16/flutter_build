@@ -21,47 +21,34 @@ Download and install the appropriate package for your operating system:
 - Windows: Coming soon
 - Linux: Coming soon
 
+### 🔒 macOS Security Note
+
+> This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple.
+
+If you're unable to open the application on macOS, follow these steps:
+1. Go to System Settings
+2. Navigate to Privacy & Security
+3. In the Security section, set "Allow applications from anywhere"
+4. If you don't see the "anywhere" option, run this command in Terminal:
+
+   ```bash
+   sudo spctl --master-disable
+   ```
+   
 ## ✨ Features
 
-### 🚀 Build Management
-- Cross-platform build support (iOS, Android, Web)
-- Platform-specific build configurations
-- iOS IPA builds (macOS only)
-- Android APK and App Bundle generation
-- Web application builds
-- Multiple build modes (Debug, Release, Profile)
+- 🚀 Cross-platform build support (iOS, Android, Web)
+- 🔄 Track build history and configurations
+- 🎨 Modern UI with dark/light themes
+- ⚡ Fast and efficient build process
+- 🛠️ Advanced build configuration options
+- 📱 iOS IPA & Android APK/AAB generation
+- 🌐 Web application builds
+- 🔍 Real-time build monitoring
 
-### 🔄 Project History
-- Track all your previous builds
-- View build timestamps and configurations
-- Quick access to recent projects
-- Build status monitoring
-- Detailed build logs
 
-### 🎨 User Interface
-- Modern, intuitive design
-- Real-time build progress
-- Interactive terminal output
-- Dark and light theme support
-- Responsive layout for all screen sizes
 
-### ⚡ Performance
-- Fast build process
-- Efficient dependency management
-- Optimized build configurations
-- Parallel build support
-- Minimal resource usage
-
-### 🛠️ Developer Tools
-- Version management
-- Build configuration presets
-- Project validation
-- Error handling and reporting
-- Build output organization
-
-## 🚀 Getting Started
-
-### Prerequisites
+### 📋 Prerequisites
 
 - Flutter SDK (latest version)
 - Xcode (for iOS builds)
