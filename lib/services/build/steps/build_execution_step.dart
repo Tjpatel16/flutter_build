@@ -3,6 +3,7 @@ import '../../../riverpod/build/app_build_provider.dart';
 import '../../../riverpod/build/app_mode_provider.dart';
 import '../build_step.dart';
 import '../command_runner.dart';
+import '../flutter_executable.dart';
 
 class BuildExecutionStep extends BuildStep {
   BuildExecutionStep(super.ref);
@@ -17,6 +18,8 @@ class BuildExecutionStep extends BuildStep {
       throw Exception('Build type not selected');
     }
 
+    final flutterExe = await FlutterExecutable.getPath();
+
     final appMode = ref.read(appModeTypeProvider);
 
     addOutput(
@@ -27,6 +30,6 @@ class BuildExecutionStep extends BuildStep {
       buildCommand.add(appMode.flag);
     }
 
-    await CommandRunner.run('flutter', buildCommand, workingDir, addOutput);
+    await CommandRunner.run(flutterExe, buildCommand, workingDir, addOutput);
   }
 }

@@ -40,7 +40,14 @@ class HistoryService {
 
   static List<ProjectHistory> getProjects() {
     try {
-      final projects = StorageService.history?.values?.toList() ?? [];
+      final box = StorageService.history;
+      if (box == null) {
+        debugPrint('History box is not initialized');
+        return [];
+      }
+      
+      final projects = box.values.toList();
+      debugPrint('Retrieved ${projects.length} projects from history');
       return projects..sort((a, b) => b.lastAccessed.compareTo(a.lastAccessed));
     } catch (e) {
       debugPrint('Error getting projects from history: $e');
