@@ -1,17 +1,18 @@
+<p align="center">
+  <img src="assets/images/logo.png" width="200" alt="Flutter Build Logo" />
+</p>
+
 # Flutter Build
 
 A powerful Flutter application that streamlines the build and deployment process for your Flutter projects.
 
 ## 📱 Screenshots
 
-### Project Selection & Build Configuration
-![Project Selection](./screenshots/ss1.png)
-
-### Build Process
-![Build Process](./screenshots/ss2.png)
-
-### Build Output
-![Build Output](./screenshots/ss3.png)
+<p align="center">
+  <img src="./screenshots/ss1.png" width="280" alt="Project Selection" />&nbsp;&nbsp;
+  <img src="./screenshots/ss2.png" width="280" alt="Build Process" />&nbsp;&nbsp;
+  <img src="./screenshots/ss3.png" width="280" alt="Build Output" />
+</p>
 
 ## ✨ Features
 
