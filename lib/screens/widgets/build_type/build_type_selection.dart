@@ -52,7 +52,10 @@ class BuildTypeSelection extends ConsumerWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
@@ -97,18 +100,25 @@ class BuildTypeSelection extends ConsumerWidget {
               final bool canSelectIOS =
                   type == AppBuildType.iosIpa ? isMacOS : true;
 
-              return SizedBox(
-                width: 230,
-                child: BuildOptionCard(
-                  isSelected: selectedBuildType == type,
-                  icon: _getIconForBuildType(type),
-                  title: type.title,
-                  description: type.description,
-                  onTap: isEnabled && canSelectIOS && selectedBuildType != type
-                      ? () {
-                          ref.read(appBuildTypeProvider.notifier).state = type;
-                        }
-                      : null,
+              return Tooltip(
+                message: canSelectIOS
+                    ? ''
+                    : 'IOS build option is currently disabled as it requires macOS. To build iOS apps, please use a Mac computer.',
+                child: SizedBox(
+                  width: 230,
+                  child: BuildOptionCard(
+                    isSelected: selectedBuildType == type,
+                    isEnabled: canSelectIOS && isEnabled,
+                    icon: _getIconForBuildType(type),
+                    title: type.title,
+                    description: type.description,
+                    onTap: selectedBuildType != type
+                        ? () {
+                            ref.read(appBuildTypeProvider.notifier).state =
+                                type;
+                          }
+                        : null,
+                  ),
                 ),
               );
             }).toList(),
