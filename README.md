@@ -16,25 +16,25 @@ A powerful Flutter application that streamlines the build and deployment process
 
 ## 📥 Download
 
-Download and install the appropriate package for your operating system:
-- macOS: [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
-- Windows: Coming soon
-- Linux: Coming soon
+### macOS
+📦 [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
+* This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple
+* Go to System Settings > Privacy & Security and allow the application to run
+* If you don't see the "anywhere" option, run:
+    ```bash
+    sudo spctl --master-disable
+    ```
+### Linux
+📦 [flutter-build.deb](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
+* Go to the app download location
+* Run command:
+    ```bash
+    sudo apt install ./flutter-build.deb
+    ```
+### - Windows
+📦 Coming soon
 
-### 🔒 macOS Security Note
 
-> This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple.
-
-If you're unable to open the application on macOS, follow these steps:
-1. Go to System Settings
-2. Navigate to Privacy & Security
-3. In the Security section, set "Allow applications from anywhere"
-4. If you don't see the "anywhere" option, run this command in Terminal:
-
-   ```bash
-   sudo spctl --master-disable
-   ```
-   
 ## ✨ Features
 
 - 🚀 Cross-platform build support (iOS, Android, Web)
