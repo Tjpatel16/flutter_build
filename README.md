@@ -17,7 +17,7 @@ A powerful Flutter application that streamlines the build and deployment process
 ## 📥 Download
 
 ### macOS
-📦 [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
+📦 [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0)
 * This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple
 * Go to System Settings > Privacy & Security and allow the application to run
 * If you don't see the "anywhere" option, run:
@@ -25,7 +25,7 @@ A powerful Flutter application that streamlines the build and deployment process
     sudo spctl --master-disable
     ```
 ### Linux
-📦 [flutter-build.deb](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0%2B1)
+📦 [flutter-build.deb](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0)
 * Go to the app download location
 * Run command:
     ```bash
