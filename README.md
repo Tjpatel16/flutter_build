@@ -19,7 +19,7 @@ A powerful Flutter application that streamlines the build and deployment process
 ### macOS
 📦 [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0)
 * This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple
-* Go to System Settings > Privacy & Security and allow the application to run
+* Go to System Settings > Privacy & Security, scroll to Security section, then check "Allow applications from". If it's set to "App Store" or "App Store and identified developers", change it to "Anywhere" to allow the application to run
 * If you don't see the "anywhere" option, run:
     ```bash
     sudo spctl --master-disable
