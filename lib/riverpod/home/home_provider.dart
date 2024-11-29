@@ -21,9 +21,6 @@ class HomeNotifier extends AsyncNotifier<HomeState> {
   @override
   Future<HomeState> build() async {
     try {
-      debugPrint('Initializing storage service...');
-      await StorageService.initialize();
-      debugPrint('Storage service initialized');
       return const HomeState();
     } catch (e) {
       debugPrint('Error in home provider build: $e');

@@ -19,11 +19,6 @@ class ProjectHistoryState {
 class ProjectHistoryNotifier extends AsyncNotifier<ProjectHistoryState> {
   @override
   Future<ProjectHistoryState> build() async {
-    // Ensure storage is initialized
-    if (StorageService.history == null) {
-      await StorageService.initialize();
-    }
-    
     final projects = HistoryService.getProjects();
     debugPrint('ProjectHistoryNotifier: Retrieved ${projects.length} projects');
     return ProjectHistoryState(recentProjects: projects);
