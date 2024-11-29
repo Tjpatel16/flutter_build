@@ -14,47 +14,41 @@ A powerful Flutter application that streamlines the build and deployment process
   <img src="./screenshots/ss3.png" width="280" alt="Build Output" />
 </p>
 
+## 📥 Download
+
+### macOS
+📦 [flutter-build.dmg](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0)
+* This is an open-source app, don't worry! The security warning appears because the app is not notarized with Apple
+* Go to System Settings > Privacy & Security and allow the application to run
+* If you don't see the "anywhere" option, run:
+    ```bash
+    sudo spctl --master-disable
+    ```
+### Linux
+📦 [flutter-build.deb](https://github.com/Tjpatel16/flutter_build/releases/tag/v1.0.0)
+* Go to the app download location
+* Run command:
+    ```bash
+    sudo apt install ./flutter-build.deb
+    ```
+### - Windows
+📦 Coming soon
+
+
 ## ✨ Features
 
-### 🚀 Build Management
-- Cross-platform build support (iOS, Android, Web)
-- Platform-specific build configurations
-- iOS IPA builds (macOS only)
-- Android APK and App Bundle generation
-- Web application builds
-- Multiple build modes (Debug, Release, Profile)
+- 🚀 Cross-platform build support (iOS, Android, Web)
+- 🔄 Track build history and configurations
+- 🎨 Modern UI with dark/light themes
+- ⚡ Fast and efficient build process
+- 🛠️ Advanced build configuration options
+- 📱 iOS IPA & Android APK/AAB generation
+- 🌐 Web application builds
+- 🔍 Real-time build monitoring
 
-### 🔄 Project History
-- Track all your previous builds
-- View build timestamps and configurations
-- Quick access to recent projects
-- Build status monitoring
-- Detailed build logs
 
-### 🎨 User Interface
-- Modern, intuitive design
-- Real-time build progress
-- Interactive terminal output
-- Dark and light theme support
-- Responsive layout for all screen sizes
 
-### ⚡ Performance
-- Fast build process
-- Efficient dependency management
-- Optimized build configurations
-- Parallel build support
-- Minimal resource usage
-
-### 🛠️ Developer Tools
-- Version management
-- Build configuration presets
-- Project validation
-- Error handling and reporting
-- Build output organization
-
-## 🚀 Getting Started
-
-### Prerequisites
+### 📋 Prerequisites
 
 - Flutter SDK (latest version)
 - Xcode (for iOS builds)
@@ -72,4 +66,4 @@ A powerful Flutter application that streamlines the build and deployment process
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

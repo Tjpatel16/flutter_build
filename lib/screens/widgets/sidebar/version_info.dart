@@ -20,7 +20,9 @@ class _VersionInfoState extends State<VersionInfo> {
   }
 
   Future<void> _loadVersion() async {
+    await VersionService.checkForUpdates();
     final version = await VersionService.getCurrentVersion();
+
     setState(() {
       _version = version;
       _hasUpdate = VersionService.hasUpdate();
