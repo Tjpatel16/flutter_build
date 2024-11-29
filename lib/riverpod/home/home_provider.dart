@@ -3,7 +3,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
-import '../../services/storage_service.dart';
 import '../build/app_build_provider.dart';
 import '../build/build_process_provider.dart';
 import '../build/build_output_provider.dart';
@@ -21,9 +20,6 @@ class HomeNotifier extends AsyncNotifier<HomeState> {
   @override
   Future<HomeState> build() async {
     try {
-      debugPrint('Initializing storage service...');
-      await StorageService.initialize();
-      debugPrint('Storage service initialized');
       return const HomeState();
     } catch (e) {
       debugPrint('Error in home provider build: $e');

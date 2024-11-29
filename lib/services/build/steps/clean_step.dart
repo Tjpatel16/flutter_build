@@ -16,7 +16,7 @@ class CleanStep extends BuildStep {
     final flutterExe = await FlutterExecutable.getPath();
 
     addOutput('${'>' * 50}\n', BuildOutputType.info);
-    addOutput('🧹 Step 1/3: Cleaning project...', BuildOutputType.info);
+    addOutput('🧹 Step 1/4: Cleaning project...', BuildOutputType.info);
     await CommandRunner.run(flutterExe, ['clean'], workingDir, addOutput);
     addOutput('\n', BuildOutputType.info);
     addOutput('✅ Clean completed successfully\n', BuildOutputType.success);

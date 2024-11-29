@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/build_output.dart';
 import '../../riverpod/home/home_provider.dart';
 import '../../riverpod/build/build_output_provider.dart';
+import 'steps/build_copy_step.dart';
 import 'steps/clean_step.dart';
 import 'steps/dependencies_step.dart';
 import 'steps/build_execution_step.dart';
@@ -38,6 +39,7 @@ class BuildService {
       CleanStep(ref),
       DependenciesStep(ref),
       BuildExecutionStep(ref),
+      BuildCopyStep(ref),
     ];
 
     try {

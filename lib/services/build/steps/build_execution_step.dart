@@ -23,7 +23,7 @@ class BuildExecutionStep extends BuildStep {
     final appMode = ref.read(appModeTypeProvider);
 
     addOutput(
-        '🔨 Step 3/3: Building ${buildType.title}...', BuildOutputType.info);
+        '🔨 Step 3/4: Building ${buildType.title}...', BuildOutputType.info);
 
     final List<String> buildCommand = ['build', buildType.command];
     if (appMode != null) {

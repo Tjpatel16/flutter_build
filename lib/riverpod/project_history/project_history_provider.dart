@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/project_history.dart';
 import '../../services/history_service.dart';
-import '../../services/storage_service.dart';
 
 final projectHistoryProvider =
     AsyncNotifierProvider<ProjectHistoryNotifier, ProjectHistoryState>(
@@ -19,11 +18,6 @@ class ProjectHistoryState {
 class ProjectHistoryNotifier extends AsyncNotifier<ProjectHistoryState> {
   @override
   Future<ProjectHistoryState> build() async {
-    // Ensure storage is initialized
-    if (StorageService.history == null) {
-      await StorageService.initialize();
-    }
-    
     final projects = HistoryService.getProjects();
     debugPrint('ProjectHistoryNotifier: Retrieved ${projects.length} projects');
     return ProjectHistoryState(recentProjects: projects);

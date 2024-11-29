@@ -13,7 +13,7 @@ class DependenciesStep extends BuildStep {
   }) async {
     final flutterExe = await FlutterExecutable.getPath();
     
-    addOutput('📦 Step 2/3: Updating dependencies...', BuildOutputType.info);
+    addOutput('📦 Step 2/4: Updating dependencies...', BuildOutputType.info);
     await CommandRunner.run(flutterExe, ['pub', 'get'], workingDir, addOutput);
     addOutput('\n', BuildOutputType.info);
     addOutput('✅ Dependencies updated successfully\n', BuildOutputType.success);
