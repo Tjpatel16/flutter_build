@@ -4,16 +4,35 @@ import 'dart:convert';
 import 'dart:io' show HttpException;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../models/version_info.dart';
 
 class VersionService {
   static const String _githubApiUrl =
       'https://api.github.com/repos/Tjpatel16/flutter_build/releases/latest';
   static const Duration _cacheTimeout = Duration(hours: 1);
 
-  static String? _currentVersion;
+  static PackageInfo? _packageInfo;
   static String? _latestVersion;
   static bool _hasUpdate = false;
   static DateTime? _lastCheck;
+  static VersionInfo? _versionInfo;
+
+  /// Initialize package info and return VersionInfo
+  static Future<VersionInfo> _getVersionInfo() async {
+    try {
+      if (_versionInfo != null) return _versionInfo!;
+
+      _packageInfo ??= await PackageInfo.fromPlatform();
+      _versionInfo = VersionInfo(
+        version: _packageInfo!.version,
+        buildNumber: _packageInfo!.buildNumber,
+      );
+      return _versionInfo!;
+    } catch (e) {
+      debugPrint('Error getting package info: $e');
+      return VersionInfo.defaultInfo();
+    }
+  }
 
   static Future<void> checkForUpdates() async {
     // Skip check if last check was within cache timeout
@@ -23,15 +42,15 @@ class VersionService {
     }
 
     try {
-      final currentVersion = await getCurrentVersion();
+      final versionInfo = await _getVersionInfo();
       final latestVersion = await _getLatestVersion();
 
-      _hasUpdate = _compareVersions(currentVersion, latestVersion);
+      _hasUpdate = _compareVersions(versionInfo.version, latestVersion);
       _lastCheck = DateTime.now();
 
       if (_hasUpdate) {
         debugPrint(
-            'Update available: Current version: $currentVersion, Latest version: $latestVersion');
+            'Update available: Current version: ${versionInfo.version}, Latest version: $latestVersion');
       }
     } catch (e) {
       debugPrint('Error checking for updates: $e');
@@ -41,15 +60,10 @@ class VersionService {
     }
   }
 
-  static Future<String> getCurrentVersion() async {
-    try {
-      _currentVersion ??=
-          await PackageInfo.fromPlatform().then((info) => info.version);
-      return _currentVersion!;
-    } catch (e) {
-      debugPrint('Error getting current version: $e');
-      return '0.0.0';
-    }
+  /// Gets the current version number
+  static Future<VersionInfo> getCurrentVersion() async {
+    final versionInfo = await _getVersionInfo();
+    return versionInfo;
   }
 
   static Future<String> _getLatestVersion() async {
@@ -104,14 +118,16 @@ class VersionService {
 
   static Future<void> openReleasePage() async {
     try {
-      // Use the releases page URL instead of API URL for opening in browser
-      final uri = Uri.parse(
+      final url = Uri.parse(
           'https://github.com/Tjpatel16/flutter_build/releases/latest');
-      if (!await launchUrl(uri)) {
-        throw Exception('Could not launch release page');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        throw 'Could not launch $url';
       }
     } catch (e) {
       debugPrint('Error opening release page: $e');
+      rethrow;
     }
   }
 }
