@@ -35,22 +35,20 @@ class VersionService {
   }
 
   static Future<void> checkForUpdates() async {
-    // Skip check if last check was within cache timeout
-    if (_lastCheck != null &&
-        DateTime.now().difference(_lastCheck!) < _cacheTimeout) {
-      return;
-    }
-
     try {
       final versionInfo = await _getVersionInfo();
       final latestVersion = await _getLatestVersion();
 
+      // Always compare versions regardless of cache
       _hasUpdate = _compareVersions(versionInfo.version, latestVersion);
       _lastCheck = DateTime.now();
 
       if (_hasUpdate) {
         debugPrint(
             'Update available: Current version: ${versionInfo.version}, Latest version: $latestVersion');
+      } else {
+        debugPrint(
+            'No update available. Current: ${versionInfo.version}, Latest: $latestVersion');
       }
     } catch (e) {
       debugPrint('Error checking for updates: $e');
@@ -75,7 +73,10 @@ class VersionService {
       }
 
       final data = json.decode(response.body);
-      _latestVersion = data['tag_name'].toString().replaceAll('v', '');
+      final tagName = data['tag_name'].toString();
+      // Remove 'v' prefix if present and store clean version
+      _latestVersion = tagName.startsWith('v') ? tagName.substring(1) : tagName;
+      debugPrint('Latest version from GitHub: $_latestVersion');
       return _latestVersion!;
     } catch (e) {
       debugPrint('Error fetching latest version: $e');
@@ -85,26 +86,48 @@ class VersionService {
 
   static bool _compareVersions(String current, String latest) {
     try {
-      // Clean up version strings - remove 'v' prefix and any other non-numeric characters except dots
-      current = current.replaceAll(RegExp(r'[^0-9.]'), '');
-      latest = latest.replaceAll(RegExp(r'[^0-9.]'), '');
+      // Clean up version strings - remove 'v' prefix and split into parts
+      current = current.replaceAll(RegExp(r'[^0-9.]'), '').trim();
+      latest = latest.replaceAll(RegExp(r'[^0-9.]'), '').trim();
 
-      if (current == latest) return false;
+      debugPrint('Comparing versions - Current: $current, Latest: $latest');
 
-      final currentParts =
-          current.split('.').map((part) => int.tryParse(part) ?? 0).toList();
-      final latestParts =
-          latest.split('.').map((part) => int.tryParse(part) ?? 0).toList();
+      // Split versions into parts and convert to integers
+      List<int> currentParts = current
+          .split('.')
+          .map((part) => int.tryParse(part.trim()) ?? 0)
+          .toList();
+      List<int> latestParts = latest
+          .split('.')
+          .map((part) => int.tryParse(part.trim()) ?? 0)
+          .toList();
 
-      // Ensure both lists have 3 elements
+      // Ensure both lists have exactly 3 elements (major.minor.patch)
       while (currentParts.length < 3) currentParts.add(0);
       while (latestParts.length < 3) latestParts.add(0);
 
+      // Trim to first 3 elements if more exist
+      currentParts = currentParts.take(3).toList();
+      latestParts = latestParts.take(3).toList();
+
+      debugPrint(
+          'Version parts - Current: $currentParts, Latest: $latestParts');
+
+      // Compare each part in order (major, minor, patch)
       for (var i = 0; i < 3; i++) {
-        if (latestParts[i] > currentParts[i]) return true;
-        if (latestParts[i] < currentParts[i]) return false;
+        if (latestParts[i] > currentParts[i]) {
+          debugPrint(
+              'Update available: Latest version part ${latestParts[i]} > Current version part ${currentParts[i]} at position $i');
+          return true;
+        }
+        if (latestParts[i] < currentParts[i]) {
+          debugPrint(
+              'No update: Latest version part ${latestParts[i]} < Current version part ${currentParts[i]} at position $i');
+          return false;
+        }
       }
 
+      debugPrint('Versions are equal');
       return false;
     } catch (e) {
       debugPrint('Error comparing versions: $e');

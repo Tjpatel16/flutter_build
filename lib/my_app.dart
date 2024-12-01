@@ -20,7 +20,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      VersionService.checkForUpdates();
+      // Version check removed as it's handled by VersionInfo widget
     });
   }
 
