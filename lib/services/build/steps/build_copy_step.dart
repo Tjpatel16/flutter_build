@@ -14,16 +14,17 @@ class BuildCopyStep extends BuildStep {
   String _getBuildOutputPath(String workingDir, AppBuildType buildType) {
     // Normalize the path to handle spaces and special characters
     final normalizedWorkingDir = path.normalize(workingDir);
-    
+
     switch (buildType) {
       case AppBuildType.androidApk:
-        return path.join(normalizedWorkingDir, 'build', 'app', 'outputs', 'flutter-apk',
-            'app-release.apk');
+        return path.join(normalizedWorkingDir, 'build', 'app', 'outputs',
+            'flutter-apk', 'app-release.apk');
       case AppBuildType.androidBundle:
-        return path.join(normalizedWorkingDir, 'build', 'app', 'outputs', 'bundle',
-            'release', 'app-release.aab');
+        return path.join(normalizedWorkingDir, 'build', 'app', 'outputs',
+            'bundle', 'release', 'app-release.aab');
       case AppBuildType.iosIpa:
-        return path.join(normalizedWorkingDir, 'build', 'ios', 'ipa', 'app.ipa');
+        return path.join(
+            normalizedWorkingDir, 'build', 'ios', 'ipa', 'app.ipa');
       case AppBuildType.webApp:
         return path.join(normalizedWorkingDir, 'build', 'web');
     }
@@ -76,6 +77,8 @@ class BuildCopyStep extends BuildStep {
 
       addOutput(
           '✅ Build artifact copied to: $targetPath', BuildOutputType.success);
+      addOutput('✅ Your app is now saved in a safe place - no need to worry about losing it!', BuildOutputType.success);
+      addOutput('✅ You can now proceed with building another app.', BuildOutputType.success);
     } catch (e) {
       addOutput(
           '⚠️ Failed to copy build artifact: $e', BuildOutputType.warning);
