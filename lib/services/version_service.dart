@@ -103,8 +103,12 @@ class VersionService {
           .toList();
 
       // Ensure both lists have exactly 3 elements (major.minor.patch)
-      while (currentParts.length < 3) currentParts.add(0);
-      while (latestParts.length < 3) latestParts.add(0);
+      while (currentParts.length < 3) {
+        currentParts.add(0);
+      }
+      while (latestParts.length < 3) {
+        latestParts.add(0);
+      }
 
       // Trim to first 3 elements if more exist
       currentParts = currentParts.take(3).toList();

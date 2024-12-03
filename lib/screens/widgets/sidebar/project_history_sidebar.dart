@@ -4,7 +4,6 @@ import '../../../models/project_history.dart';
 import '../../../riverpod/home/home_provider.dart';
 import '../../../riverpod/project_history/project_history_provider.dart';
 import '../../../riverpod/flutter_info/flutter_info_provider.dart';
-import '../../../utils/field_constant.dart';
 import '../text_widget.dart';
 import '../../../utils/notification_utils.dart';
 
@@ -61,7 +60,7 @@ class ProjectHistorySidebar extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   TextWidget(
-                    FieldConstant.noProjectHistory,
+                    'No recent projects',
                     textAlign: TextAlign.center,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -98,14 +97,14 @@ class ProjectHistorySidebar extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       const TextWidget(
-                        FieldConstant.recentProjects,
+                        'Recent Projects',
                         size: 14,
                         weight: FontWeight.w600,
                       ),
                     ],
                   ),
                   Tooltip(
-                    message: FieldConstant.clearHistory,
+                    message: 'Clear History',
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(

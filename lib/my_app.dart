@@ -6,7 +6,6 @@ import 'package:flutter_build/screens/pages/home_page.dart';
 import 'package:toastification/toastification.dart';
 
 import 'providers/theme_provider.dart';
-import 'services/version_service.dart';
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});

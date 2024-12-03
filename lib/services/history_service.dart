@@ -11,7 +11,7 @@ class HistoryService {
       final box = StorageService.history;
       if (box == null) return;
 
-      final existingIndex = box.values?.toList().indexWhere((p) => p.path == path) ?? -1;
+      final existingIndex = box.values.toList().indexWhere((p) => p.path == path) ?? -1;
 
       if (existingIndex != -1) {
         // Update existing project
@@ -60,7 +60,7 @@ class HistoryService {
       final box = StorageService.history;
       if (box == null) return;
 
-      final index = box.values?.toList().indexWhere((p) => p.path == path) ?? -1;
+      final index = box.values.toList().indexWhere((p) => p.path == path) ?? -1;
       if (index != -1) {
         await box.deleteAt(index);
       }
