@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yaml/yaml.dart';
+import '../../services/pubspec_service.dart';
 
 class VersionInfo {
   final String version;
@@ -11,15 +10,14 @@ class VersionInfo {
     required this.buildNumber,
   });
 
-  factory VersionInfo.fromYaml(String yamlContent) {
-    final yaml = loadYaml(yamlContent) as Map;
+  String get fullVersion => '$version+$buildNumber';
+
+  factory VersionInfo.fromPubspecInfo(PubspecInfo info) {
     return VersionInfo(
-      version: yaml['version']?.toString().split('+')[0] ?? '1.0.0',
-      buildNumber: yaml['version']?.toString().split('+')[1] ?? '1',
+      version: info.version,
+      buildNumber: info.buildNumber,
     );
   }
-
-  String get fullVersion => '$version+$buildNumber';
 }
 
 final versionInfoProvider = StateNotifierProvider<VersionInfoNotifier, AsyncValue<VersionInfo>>((ref) {
@@ -32,9 +30,10 @@ class VersionInfoNotifier extends StateNotifier<AsyncValue<VersionInfo>> {
   Future<void> loadVersion(String projectPath) async {
     try {
       state = const AsyncValue.loading();
-      final pubspecFile = File('$projectPath/pubspec.yaml');
-      final yamlContent = await pubspecFile.readAsString();
-      state = AsyncValue.data(VersionInfo.fromYaml(yamlContent));
+      final pubspecService = PubspecService();
+      pubspecService.initialize(projectPath);
+      final info = await pubspecService.getInfo();
+      state = AsyncValue.data(VersionInfo.fromPubspecInfo(info));
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -43,12 +42,17 @@ class VersionInfoNotifier extends StateNotifier<AsyncValue<VersionInfo>> {
   Future<void> updateVersion({String? version, String? buildNumber}) async {
     if (!state.hasValue) return;
 
-    final currentVersion = state.value!;
-    final newVersion = VersionInfo(
-      version: version ?? currentVersion.version,
-      buildNumber: buildNumber ?? currentVersion.buildNumber,
-    );
-
-    state = AsyncValue.data(newVersion);
+    try {
+      final pubspecService = PubspecService();
+      await pubspecService.updateVersion(
+        version: version,
+        buildNumber: buildNumber,
+      );
+      
+      final info = await pubspecService.getInfo();
+      state = AsyncValue.data(VersionInfo.fromPubspecInfo(info));
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
   }
 }
