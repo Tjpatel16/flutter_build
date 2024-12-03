@@ -2,11 +2,21 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 class FlutterPathService {
+  static final FlutterPathService _instance = FlutterPathService._internal();
+  factory FlutterPathService() => _instance;
+  FlutterPathService._internal();
+
+  Map<String, String>? _cachedFlutterInfo;
+
   static bool get isWindows => Platform.isWindows;
   static bool get isMacOS => Platform.isMacOS;
   static bool get isLinux => Platform.isLinux;
 
   Future<Map<String, String>> getFlutterInfo() async {
+    if (_cachedFlutterInfo != null) {
+      return _cachedFlutterInfo!;
+    }
+
     final envFiles = _getEnvFilePaths();
 
     for (final envFile in envFiles) {
@@ -40,13 +50,19 @@ class FlutterPathService {
                   final flutterRoot = parts[0];
                   final result =
                       await _validateFlutterPath(flutterRoot, envFile);
-                  if (result != null) return result;
+                  if (result != null) {
+                    _cachedFlutterInfo = result;
+                    return result;
+                  }
                 }
                 // If path points directly to flutter directory
                 else if (normalizedPath.endsWith('flutter')) {
                   final result =
                       await _validateFlutterPath(normalizedPath, envFile);
-                  if (result != null) return result;
+                  if (result != null) {
+                    _cachedFlutterInfo = result;
+                    return result;
+                  }
                 }
               }
             }
@@ -57,7 +73,8 @@ class FlutterPathService {
       }
     }
 
-    return {'error': 'Flutter SDK not found'};
+    _cachedFlutterInfo = {'error': 'Flutter SDK not found'};
+    return _cachedFlutterInfo!;
   }
 
   static List<String> _getEnvFilePaths() {
