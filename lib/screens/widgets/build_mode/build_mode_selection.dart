@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../riverpod/build/app_mode_provider.dart';
 import '../../../riverpod/build/app_mode_type.dart';
+import '../common/common_option_card.dart';
 import '../text_widget.dart';
-import 'build_mode_card.dart';
 
 class BuildModeSelection extends ConsumerWidget {
   const BuildModeSelection({super.key});
@@ -92,7 +92,7 @@ class BuildModeSelection extends ConsumerWidget {
             children: AppModeType.values.map((mode) {
               return SizedBox(
                 width: 300,
-                child: BuildModeCard(
+                child: CommonOptionCard(
                   title: mode.displayName,
                   description: mode.description,
                   icon: _getIconForMode(mode),
@@ -101,6 +101,8 @@ class BuildModeSelection extends ConsumerWidget {
                     ref.read(appModeTypeProvider.notifier).state =
                         selectedMode == mode ? null : mode;
                   },
+                  maxLines: 2,
+                  padding: const EdgeInsets.all(12),
                 ),
               );
             }).toList(),

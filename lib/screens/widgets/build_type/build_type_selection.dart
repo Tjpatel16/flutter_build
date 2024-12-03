@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../riverpod/build/app_build_type.dart';
 import '../../../riverpod/build/app_build_provider.dart';
 import '../../../riverpod/flutter_info/flutter_info_provider.dart';
+import '../common/common_option_card.dart';
 import '../text_widget.dart';
-import 'build_option_card.dart';
 
 class BuildTypeSelection extends ConsumerWidget {
   const BuildTypeSelection({super.key});
@@ -106,18 +106,20 @@ class BuildTypeSelection extends ConsumerWidget {
                     : 'IOS build option is currently disabled as it requires macOS. To build iOS apps, please use a Mac computer.',
                 child: SizedBox(
                   width: 230,
-                  child: BuildOptionCard(
-                    isSelected: selectedBuildType == type,
-                    isEnabled: canSelectIOS && isEnabled,
-                    icon: _getIconForBuildType(type),
+                  child: CommonOptionCard(
                     title: type.title,
                     description: type.description,
+                    icon: _getIconForBuildType(type),
+                    isSelected: selectedBuildType == type,
+                    isEnabled: canSelectIOS && isEnabled,
                     onTap: selectedBuildType != type
                         ? () {
                             ref.read(appBuildTypeProvider.notifier).state =
-                                type;
+                                selectedBuildType == type ? null : type;
                           }
                         : null,
+                    maxLines: 1,
+                    padding: const EdgeInsets.all(14),
                   ),
                 ),
               );

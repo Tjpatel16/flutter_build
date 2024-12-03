@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import '../text_widget.dart';
 
-class BuildOptionCard extends StatelessWidget {
+class CommonOptionCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
   final bool isSelected;
   final bool isEnabled;
   final VoidCallback? onTap;
+  final EdgeInsets padding;
+  final int? maxLines;
 
-  const BuildOptionCard({
+  const CommonOptionCard({
     super.key,
     required this.title,
     required this.description,
     required this.icon,
     required this.isSelected,
-    required this.onTap,
     this.isEnabled = true,
+    this.onTap,
+    this.padding = const EdgeInsets.all(12),
+    this.maxLines = 2,
   });
 
   @override
@@ -45,7 +49,7 @@ class BuildOptionCard extends StatelessWidget {
         onTap: isEnabled ? onTap : null,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: padding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -76,7 +80,6 @@ class BuildOptionCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextWidget(
@@ -96,7 +99,7 @@ class BuildOptionCard extends StatelessWidget {
                           child: TextWidget(
                             description,
                             size: 12,
-                            maxLines: 1,
+                            maxLines: maxLines,
                             overflow: TextOverflow.ellipsis,
                             color: !isEnabled
                                 ? theme.colorScheme.onSurfaceVariant
