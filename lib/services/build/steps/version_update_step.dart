@@ -1,7 +1,7 @@
 import '../../../riverpod/version/version_provider.dart';
 import '../../../models/build_output.dart';
 import '../build_step.dart';
-import 'dart:io';
+import '../../pubspec_service.dart';
 
 class VersionUpdateStep extends BuildStep {
   VersionUpdateStep(super.ref);
@@ -19,27 +19,18 @@ class VersionUpdateStep extends BuildStep {
     }
 
     final versionInfo = versionState.value!;
-    final pubspecFile = File('$workingDir/pubspec.yaml');
-    final content = await pubspecFile.readAsString();
+    final pubspecService = PubspecService();
+    pubspecService.initialize(workingDir);
 
-    // Update version in pubspec.yaml
-    final lines = content.split('\n');
-    bool versionUpdated = false;
-
-    for (var i = 0; i < lines.length; i++) {
-      if (lines[i].trim().startsWith('version:')) {
-        lines[i] = 'version: ${versionInfo.fullVersion}';
-        versionUpdated = true;
-        break;
-      }
+    try {
+      await pubspecService.updateVersion(
+        version: versionInfo.version,
+        buildNumber: versionInfo.buildNumber,
+      );
+      addOutput('✅ Version updated to ${versionInfo.fullVersion}\n',
+          BuildOutputType.success);
+    } catch (e) {
+      throw Exception('Failed to update version: $e');
     }
-
-    if (!versionUpdated) {
-      throw Exception('Version line not found in pubspec.yaml');
-    }
-
-    await pubspecFile.writeAsString(lines.join('\n'));
-    addOutput('✅ Version updated to ${versionInfo.fullVersion}\n',
-        BuildOutputType.success);
   }
 }

@@ -6,6 +6,7 @@ import '../../../riverpod/build/app_build_provider.dart';
 import '../../../riverpod/build/app_build_type.dart';
 import '../../../riverpod/build/app_mode_provider.dart';
 import '../../build_copy_service.dart';
+import '../../pubspec_service.dart';
 import '../build_step.dart';
 
 class BuildCopyStep extends BuildStep {
@@ -29,19 +30,15 @@ class BuildCopyStep extends BuildStep {
     }
   }
 
-  String _getAppName(String workingDir) {
-    final pubspecFile = File(path.join(workingDir, 'pubspec.yaml'));
-    if (!pubspecFile.existsSync()) {
-      throw Exception('pubspec.yaml not found');
+  Future<String> _getAppName(String workingDir) {
+    final pubspecService = PubspecService();
+    pubspecService.initialize(workingDir);
+    
+    try {
+      return pubspecService.getInfo().then((info) => info.name);
+    } catch (e) {
+      throw Exception('Failed to get project name: $e');
     }
-
-    final content = pubspecFile.readAsStringSync();
-    final nameMatch = RegExp(r'name:\s*([^\s]+)').firstMatch(content);
-    if (nameMatch == null) {
-      throw Exception('Project name not found in pubspec.yaml');
-    }
-
-    return nameMatch.group(1)!;
   }
 
   @override
@@ -66,7 +63,7 @@ class BuildCopyStep extends BuildStep {
     }
 
     try {
-      final appName = _getAppName(workingDir);
+      final appName = await _getAppName(workingDir);
       final targetPath = await BuildCopyService.copyBuiltApp(
         sourceFilePath: outputPath,
         appName: appName,
