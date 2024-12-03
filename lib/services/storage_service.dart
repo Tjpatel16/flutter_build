@@ -10,6 +10,11 @@ class StorageService {
   static const String settingsBoxName = 'settings';
   static const String historyBoxName = 'project_history';
 
+  // Settings keys
+  static const String uiModeKey = 'ui_mode';
+  static const String compactUiMode = 'compact';
+  static const String detailedUiMode = 'detailed';
+
   static Box? _settingsBox;
   static Box<ProjectHistory>? _historyBox;
 
@@ -62,8 +67,15 @@ class StorageService {
           _historyBox = null;
         }
       }
+
+      // Set default UI mode if not set
+      if (_settingsBox?.get(uiModeKey) == null) {
+        await _settingsBox?.put(uiModeKey, compactUiMode);
+      }
+
+      debugPrint('Storage service initialized successfully');
     } catch (e) {
-      debugPrint('Error in storage initialization: $e');
+      debugPrint('Error initializing storage service: $e');
       // Make boxes nullable and continue
       _settingsBox = null;
       _historyBox = null;

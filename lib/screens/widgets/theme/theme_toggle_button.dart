@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/theme_provider.dart';
+import '../../../providers/ui_mode_provider.dart';
+import '../../../services/storage_service.dart';
 import '../text_widget.dart';
 
 class ThemeToggleButton extends ConsumerWidget {
@@ -165,6 +167,7 @@ class _ThemeDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final themeColor = ref.watch(themeColorProvider);
+    final uiMode = ref.watch(uiModeProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
@@ -205,6 +208,32 @@ class _ThemeDialog extends ConsumerWidget {
               selected: {themeMode},
               onSelectionChanged: (Set<ThemeMode> selected) {
                 ref.read(themeProvider.notifier).changeTheme(selected.first);
+              },
+              showSelectedIcon: true,
+            ),
+            const SizedBox(height: 16),
+            const TextWidget(
+              'UI Mode',
+              size: 16,
+              weight: FontWeight.w600,
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment<String>(
+                  value: StorageService.compactUiMode,
+                  icon: Icon(Icons.view_compact_rounded),
+                  label: TextWidget('Compact'),
+                ),
+                ButtonSegment<String>(
+                  value: StorageService.detailedUiMode,
+                  icon: Icon(Icons.view_agenda_rounded),
+                  label: TextWidget('Detailed'),
+                ),
+              ],
+              selected: {uiMode},
+              onSelectionChanged: (Set<String> selected) {
+                ref.read(uiModeProvider.notifier).toggleUiMode();
               },
               showSelectedIcon: true,
             ),
