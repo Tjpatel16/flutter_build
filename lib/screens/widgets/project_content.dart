@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../riverpod/build/app_build_provider.dart';
+import '../../riverpod/build/app_build_type.dart';
+import '../../riverpod/build/app_mode_provider.dart';
+import '../../riverpod/build/app_mode_type.dart';
 import '../../riverpod/home/home_provider.dart';
 import '../../riverpod/version/version_provider.dart';
+import 'advance_options/advance_option_selection.dart';
 import 'build_mode/build_mode_selection.dart';
 import 'build_type/build_type_selection.dart';
 import 'project_selection.dart';
@@ -16,6 +21,8 @@ class ProjectContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final homeState = ref.watch(homeProvider);
+    final appBuildType = ref.watch(appBuildTypeProvider);
+    final selectedMode = ref.watch(appModeTypeProvider);
 
     // Listen for project selection changes
     ref.listen(homeProvider, (previous, next) {
@@ -50,7 +57,7 @@ class ProjectContent extends ConsumerWidget {
               opacity: state.isValidProject ? 1.0 : 0.5,
               child: AbsorbPointer(
                 absorbing: state.selectedProjectPath == null,
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     VersionManagement(),
@@ -58,6 +65,11 @@ class ProjectContent extends ConsumerWidget {
                     BuildTypeSelection(),
                     SizedBox(height: 24),
                     BuildModeSelection(),
+                    SizedBox(height: 24),
+                    appBuildType == AppBuildType.webApp &&
+                            selectedMode == AppModeType.release
+                        ? AdvanceOptionSelection()
+                        : SizedBox.shrink(),
                     SizedBox(height: 24),
                     StartBuildButton(),
                     SizedBox(height: 24),
