@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:flutter_build/riverpod/build/app_mode_type.dart';
 import 'package:path/path.dart' as path;
 
 import '../../../models/build_output.dart';
@@ -12,17 +14,20 @@ import '../build_step.dart';
 class BuildCopyStep extends BuildStep {
   BuildCopyStep(super.ref);
 
-  String _getBuildOutputPath(String workingDir, AppBuildType buildType) {
+  String _getBuildOutputPath(
+      String workingDir, AppBuildType buildType, AppModeType appMode) {
     // Normalize the path to handle spaces and special characters
     final normalizedWorkingDir = path.normalize(workingDir);
+
+    final appModeName = appMode.copyName;
 
     switch (buildType) {
       case AppBuildType.androidApk:
         return path.join(normalizedWorkingDir, 'build', 'app', 'outputs',
-            'flutter-apk', 'app-release.apk');
+            'flutter-apk', 'app-$appModeName.apk');
       case AppBuildType.androidBundle:
         return path.join(normalizedWorkingDir, 'build', 'app', 'outputs',
-            'bundle', 'release', 'app-release.aab');
+            'bundle', appModeName, 'app-$appModeName.aab');
       case AppBuildType.iosIpa:
         return path.join(
             normalizedWorkingDir, 'build', 'ios', 'ipa', 'app.ipa');
@@ -34,7 +39,7 @@ class BuildCopyStep extends BuildStep {
   Future<String> _getAppName(String workingDir) {
     final pubspecService = PubspecService();
     pubspecService.initialize(workingDir);
-    
+
     try {
       return pubspecService.getInfo().then((info) => info.name);
     } catch (e) {
@@ -56,7 +61,7 @@ class BuildCopyStep extends BuildStep {
     addOutput('\n${'>' * 50}\n', BuildOutputType.info);
     addOutput('📦 Step 4/4: Copying build artifacts...', BuildOutputType.info);
 
-    final outputPath = _getBuildOutputPath(workingDir, buildType);
+    final outputPath = _getBuildOutputPath(workingDir, buildType, appMode!);
     if (!File(outputPath).existsSync() && !Directory(outputPath).existsSync()) {
       addOutput(
           '⚠️ Build output not found at: $outputPath', BuildOutputType.warning);
@@ -74,8 +79,11 @@ class BuildCopyStep extends BuildStep {
 
       addOutput(
           '✅ Build artifact copied to: $targetPath', BuildOutputType.success);
-      addOutput('✅ Your app is now saved in a safe place - no need to worry about losing it!', BuildOutputType.success);
-      addOutput('✅ You can now proceed with building another app.', BuildOutputType.success);
+      addOutput(
+          '✅ Your app is now saved in a safe place - no need to worry about losing it!',
+          BuildOutputType.success);
+      addOutput('✅ You can now proceed with building another app.',
+          BuildOutputType.success);
     } catch (e) {
       addOutput(
           '⚠️ Failed to copy build artifact: $e', BuildOutputType.warning);

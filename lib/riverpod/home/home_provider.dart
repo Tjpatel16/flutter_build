@@ -1,15 +1,16 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
+
 import '../build/app_build_provider.dart';
-import '../build/build_process_provider.dart';
-import '../build/build_output_provider.dart';
 import '../build/app_mode_provider.dart';
-import '../version/version_provider.dart';
+import '../build/build_output_provider.dart';
 import '../flutter_info/flutter_info_provider.dart';
 import '../project_history/project_history_provider.dart';
+import '../version/version_provider.dart';
 import 'home_state.dart';
 
 final homeProvider = AsyncNotifierProvider<HomeNotifier, HomeState>(() {
@@ -54,9 +55,7 @@ class HomeNotifier extends AsyncNotifier<HomeState> {
       final projectName = path.basename(projectPath);
 
       if (isValid) {
-        await ref
-            .read(projectHistoryProvider.notifier)
-            .addProject(projectPath);
+        await ref.read(projectHistoryProvider.notifier).addProject(projectPath);
         await ref.read(versionInfoProvider.notifier).loadVersion(projectPath);
       }
 
@@ -71,9 +70,6 @@ class HomeNotifier extends AsyncNotifier<HomeState> {
   }
 
   Future<void> _resetConfigurations() async {
-    // Reset build process state
-    ref.read(buildProcessProvider.notifier).reset();
-
     // Reset build output
     ref.read(buildOutputProvider.notifier).clear();
 

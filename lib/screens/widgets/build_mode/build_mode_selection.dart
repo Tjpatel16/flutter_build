@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../riverpod/build/app_build_provider.dart';
+import '../../../riverpod/build/app_build_type.dart';
 import '../../../riverpod/build/app_mode_provider.dart';
 import '../../../riverpod/build/app_mode_type.dart';
 import '../common/common_option_card.dart';
@@ -23,6 +25,7 @@ class BuildModeSelection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMode = ref.watch(appModeTypeProvider);
+    final selectedBuildType = ref.watch(appBuildTypeProvider);
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -90,19 +93,29 @@ class BuildModeSelection extends ConsumerWidget {
             spacing: 12,
             runSpacing: 12,
             children: AppModeType.values.map((mode) {
-              return SizedBox(
-                width: 300,
-                child: CommonOptionCard(
-                  title: mode.displayName,
-                  description: mode.description,
-                  icon: _getIconForMode(mode),
-                  isSelected: selectedMode == mode,
-                  onTap: () {
-                    ref.read(appModeTypeProvider.notifier).state =
-                        selectedMode == mode ? null : mode;
-                  },
-                  maxLines: 2,
-                  padding: const EdgeInsets.all(12),
+              return Opacity(
+                opacity: selectedBuildType == AppBuildType.webApp &&
+                        mode == AppModeType.debug
+                    ? 0.5
+                    : 1.0,
+                child: AbsorbPointer(
+                  absorbing: selectedBuildType == AppBuildType.webApp &&
+                      mode == AppModeType.debug,
+                  child: SizedBox(
+                    width: 300,
+                    child: CommonOptionCard(
+                      title: mode.displayName,
+                      description: mode.description,
+                      icon: _getIconForMode(mode),
+                      isSelected: selectedMode == mode,
+                      onTap: () {
+                        ref.read(appModeTypeProvider.notifier).state =
+                            selectedMode == mode ? null : mode;
+                      },
+                      maxLines: 2,
+                      padding: const EdgeInsets.all(12),
+                    ),
+                  ),
                 ),
               );
             }).toList(),

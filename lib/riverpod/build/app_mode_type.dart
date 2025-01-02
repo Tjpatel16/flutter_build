@@ -14,6 +14,17 @@ enum AppModeType {
     }
   }
 
+    String get copyName {
+    switch (this) {
+      case AppModeType.debug:
+        return 'debug';
+      case AppModeType.release:
+        return 'release';
+      case AppModeType.profile:
+        return 'profile';
+    }
+  }
+
   String get description {
     switch (this) {
       case AppModeType.debug:
