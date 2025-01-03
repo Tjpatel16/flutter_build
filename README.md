@@ -11,7 +11,8 @@ A powerful Flutter application that streamlines the build and deployment process
 <p align="center">
   <img src="./screenshots/ss1.png" width="280" alt="Project Selection" />&nbsp;&nbsp;
   <img src="./screenshots/ss2.png" width="280" alt="Build Process" />&nbsp;&nbsp;
-  <img src="./screenshots/ss3.png" width="280" alt="Build Output" />
+  <img src="./screenshots/ss3.png" width="280" alt="Build Output" />&nbsp;&nbsp;
+  <img src="./screenshots/ss5.png" width="280" alt="App icon generator" />
 </p>
 
 ## 📥 Download
@@ -45,8 +46,10 @@ A powerful Flutter application that streamlines the build and deployment process
 - 📱 iOS IPA & Android APK/AAB generation
 - 🌐 Web application builds
 - 🔍 Real-time build monitoring
+- 🖼️ App Icon Generator
 
-
+## 🆕 What's New
+- 🖼️ **App Icon Generator**: Easily create app icons for both Android and iOS platforms from a single image. This tool helps streamline the process of generating all the necessary icon sizes required for your Flutter project.
 
 ### 📋 Prerequisites
 
