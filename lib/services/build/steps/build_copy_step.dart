@@ -7,6 +7,7 @@ import '../../../models/build_output.dart';
 import '../../../riverpod/build/app_build_provider.dart';
 import '../../../riverpod/build/app_build_type.dart';
 import '../../../riverpod/build/app_mode_provider.dart';
+import '../../../riverpod/version/version_provider.dart';
 import '../../build_copy_service.dart';
 import '../../pubspec_service.dart';
 import '../build_step.dart';
@@ -68,6 +69,8 @@ class BuildCopyStep extends BuildStep {
       return;
     }
 
+    final version = ref.read(versionInfoProvider);
+    String versionString = "${version.value!.version}+${version.value!.buildNumber}";
     try {
       final appName = await _getAppName(workingDir);
       final targetPath = await BuildCopyService.copyBuiltApp(
@@ -75,6 +78,7 @@ class BuildCopyStep extends BuildStep {
         appName: appName,
         buildType: buildType,
         modeType: appMode,
+        version: versionString,
       );
 
       addOutput(

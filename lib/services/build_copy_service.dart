@@ -17,6 +17,7 @@ class BuildCopyService {
     required String appName,
     AppBuildType? buildType,
     AppModeType? modeType,
+    required String version,
   }) async {
     try {
       // Normalize the source file path to handle spaces and special characters
@@ -27,12 +28,6 @@ class BuildCopyService {
         throw Exception(
             'Build output not found at: $normalizedSourcePath\nPlease ensure the build completed successfully.');
       }
-
-      // Get app version info
-      final versionInfo = await VersionService.getCurrentVersion();
-
-      // Create version directory name
-      final versionDir = versionInfo.toString();
 
       // create app directory
       final appDir = "App";
@@ -58,7 +53,7 @@ class BuildCopyService {
       // Create full target directory path
       final homeDir = Platform.environment['HOME'] ?? '';
       final targetDir = path.normalize(path.join(
-          homeDir, _baseOutputDir, appName, appDir, versionDir, dateDir));
+          homeDir, _baseOutputDir, appName, appDir, version, dateDir));
 
       // Create target directory if it doesn't exist
       await Directory(targetDir).create(recursive: true);

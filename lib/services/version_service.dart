@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io' show HttpException;
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../models/version_info.dart';
 
 class VersionService {
