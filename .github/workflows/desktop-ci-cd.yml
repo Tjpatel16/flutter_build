@@ -23,6 +23,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: stable
+          architecture: x64
           cache: false  # Disable cache to ensure fresh installation
 
       # Debug Flutter Installation
