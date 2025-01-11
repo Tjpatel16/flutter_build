@@ -91,10 +91,8 @@ jobs:
       # Step 9: Package the DMG file
       - name: Package DMG File
         run: |
-          # Use the DMG configuration file to create the DMG
           create-dmg --config dmg-config/dmg-config.json --overwrite .
-          # Rename the DMG file for release
-          mv Flutter\ App*.dmg "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
+          mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
       # Step 10: Upload the DMG file as an artifact
       - name: Upload Build Artifact
