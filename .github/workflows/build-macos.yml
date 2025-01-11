@@ -32,9 +32,9 @@ jobs:
       - name: Enable macOS Support
         run: flutter config --enable-macos-desktop
 
-      # Step 5: Build the macOS app
-      - name: Build macOS App
-        run: flutter build macos --release
+      # Step 5: Build the macOS app without code-signing
+      - name: Build macOS App Without Code Signing
+        run: flutter build macos --release --no-codesign
 
       # Step 6: Debug the build directory
       - name: Debug Build Directory
