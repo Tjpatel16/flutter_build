@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*' # Trigger the workflow only when a tag like v1.0.1 is pushed
+env:
+  FLUTTER_VERSION: "3.24.5"
 
 jobs:
   build-macos:
@@ -17,7 +19,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
     - name: Install Flutter Dependencies
       run: flutter pub get
