@@ -94,12 +94,17 @@ jobs:
       - name: Package DMG File
         run: |
           # Ensure the .app file is found and passed correctly
+          echo "APP_PATH is $APP_PATH"
           if [ ! -d "$APP_PATH" ]; then
             echo "Error: The .app file at $APP_PATH does not exist"
             exit 1
           fi
           
+          # Debug the path and create the DMG file
+          echo "Running create-dmg with APP_PATH: $APP_PATH"
           create-dmg --config dmg-config/dmg-config.json --overwrite .
+          
+          # Ensure the output is renamed properly (in case of spaces)
           mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
       # Step 10: Upload the DMG file as an artifact
