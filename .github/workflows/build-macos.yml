@@ -1,0 +1,56 @@
+name: Build and Release macOS Flutter App
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Trigger the workflow only when a tag like v1.0.1 is pushed
+
+jobs:
+  build-macos:
+    name: Build macOS App
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 'stable'
+
+    - name: Install Flutter Dependencies
+      run: flutter pub get
+
+    - name: Enable macOS Support
+      run: flutter config --enable-macos-desktop
+
+    - name: Build macOS App
+      run: flutter build macos --release
+
+    - name: Package DMG File
+      run: |
+        APP_NAME="flutter-build-macos-${GITHUB_REF_NAME}.dmg"
+        OUTPUT_DIR="build/macos/Build/Products/Release"
+        DMG_DIR="dmg-output"
+        mkdir -p $DMG_DIR
+        hdiutil create -srcfolder "$OUTPUT_DIR" -volname "Flutter App" "$DMG_DIR/$APP_NAME"
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: macos-dmg
+        path: dmg-output/*.dmg
+
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: dmg-output/*.dmg
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+        name: "Release ${{ github.ref_name }}"
+        body: |
+          This release includes the macOS build of the Flutter app.
+          - Tag: ${{ github.ref_name }}
+        draft: false
+        prerelease: false
