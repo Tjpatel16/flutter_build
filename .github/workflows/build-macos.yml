@@ -31,8 +31,19 @@ jobs:
     - name: Build macOS App
       run: flutter build macos --release
 
+    - name: Debug: List Build Directory
+      run: |
+        echo "Checking build/macos/Build/Products/Release directory:"
+        ls -la build/macos/Build/Products/Release
+
     - name: Create DMG Configuration File
       run: |
+        APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d)
+        if [ -z "$APP_PATH" ]; then
+          echo "Error: .app file not found!"
+          exit 1
+        fi
+
         mkdir -p dmg-config
         cat <<EOF > dmg-config/dmg-config.json
         {
@@ -49,7 +60,7 @@ jobs:
               "x": 192,
               "y": 344,
               "type": "file",
-              "path": "build/macos/Build/Products/Release/Flutter Build.app"
+              "path": "$APP_PATH"
             }
           ],
           "icon-size": 128,
@@ -67,6 +78,12 @@ jobs:
 
     - name: Package DMG File
       run: |
+        APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d)
+        if [ -z "$APP_PATH" ]; then
+          echo "Error: .app file not found!"
+          exit 1
+        fi
+
         create-dmg --config dmg-config/dmg-config.json --overwrite .
         mv Flutter\ App*.dmg "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
