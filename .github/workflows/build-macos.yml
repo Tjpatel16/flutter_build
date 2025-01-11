@@ -48,6 +48,7 @@ jobs:
         run: |
           # Find the .app file in the build directory
           APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d | head -n 1)
+          
           if [ -z "$APP_PATH" ]; then
             echo "Error: .app file not found in build/macos/Build/Products/Release"
             exit 1
@@ -102,7 +103,9 @@ jobs:
           
           # Debug the path and create the DMG file
           echo "Running create-dmg with APP_PATH: '$APP_PATH'"
-          create-dmg --config dmg-config/dmg-config.json --overwrite .
+          
+          # Run create-dmg command with correct APP_PATH
+          create-dmg --config dmg-config/dmg-config.json --overwrite "$APP_PATH"
           
           # Ensure the output is renamed properly (in case of spaces)
           mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
