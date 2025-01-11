@@ -39,11 +39,12 @@ jobs:
       # Step 6: Debug the build directory
       - name: Debug Build Directory
         run: |
-          echo "Checking build/macos/Build/Products/Release directory:"
+          echo "Contents of build/macos/Build/Products/Release:"
           ls -la build/macos/Build/Products/Release
 
-      # Step 7: Create DMG configuration file
-      - name: Create DMG Configuration File
+      # Step 7: Prepare DMG Configuration and Locate .app File
+      - name: Prepare DMG Configuration
+        id: prepare-dmg
         run: |
           # Find the .app file in the build directory
           APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d | head -n 1)
@@ -53,6 +54,7 @@ jobs:
           fi
 
           echo "Found .app file at $APP_PATH"
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
 
           # Create the DMG configuration JSON file
           mkdir -p dmg-config
@@ -91,6 +93,12 @@ jobs:
       # Step 9: Package the DMG file
       - name: Package DMG File
         run: |
+          # Ensure the .app file is found and passed correctly
+          if [ ! -d "$APP_PATH" ]; then
+            echo "Error: The .app file at $APP_PATH does not exist"
+            exit 1
+          fi
+          
           create-dmg --config dmg-config/dmg-config.json --overwrite .
           mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
