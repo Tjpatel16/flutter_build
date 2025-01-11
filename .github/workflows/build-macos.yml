@@ -14,36 +14,47 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Step 2: Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
+      # Step 3: Install Flutter dependencies
       - name: Install Flutter Dependencies
         run: flutter pub get
 
+      # Step 4: Enable macOS support
       - name: Enable macOS Support
         run: flutter config --enable-macos-desktop
 
+      # Step 5: Build the macOS app
       - name: Build macOS App
         run: flutter build macos --release
 
-      - name: Debug List Build Directory
+      # Step 6: Debug the build directory
+      - name: Debug Build Directory
         run: |
           echo "Checking build/macos/Build/Products/Release directory:"
           ls -la build/macos/Build/Products/Release
 
+      # Step 7: Create DMG configuration file
       - name: Create DMG Configuration File
         run: |
-          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d)
+          # Find the .app file in the build directory
+          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
-            echo "Error: .app file not found!"
+            echo "Error: .app file not found in build/macos/Build/Products/Release"
             exit 1
           fi
 
+          echo "Found .app file at $APP_PATH"
+
+          # Create the DMG configuration JSON file
           mkdir -p dmg-config
           cat <<EOF > dmg-config/dmg-config.json
           {
@@ -73,26 +84,26 @@ jobs:
           }
           EOF
 
+      # Step 8: Install the create-dmg tool
       - name: Install create-dmg
         run: npm install --global create-dmg
 
+      # Step 9: Package the DMG file
       - name: Package DMG File
         run: |
-          APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d)
-          if [ -z "$APP_PATH" ]; then
-            echo "Error: .app file not found!"
-            exit 1
-          fi
-
+          # Use the DMG configuration file to create the DMG
           create-dmg --config dmg-config/dmg-config.json --overwrite .
+          # Rename the DMG file for release
           mv Flutter\ App*.dmg "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
+      # Step 10: Upload the DMG file as an artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macos-dmg
           path: "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
+      # Step 11: Create a GitHub release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
