@@ -49,7 +49,7 @@ jobs:
             libxdamage-dev \
             libasound2-dev \
             build-essential
-      
+
       - name: Enable Flutter Desktop
         run: flutter config --enable-linux-desktop
 
@@ -123,4 +123,4 @@ jobs:
           artifacts: |
             flutter-app-${GITHUB_REF_NAME}.deb
             flutter-app-${GITHUB_REF_NAME}.AppImage
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
