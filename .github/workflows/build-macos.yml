@@ -35,11 +35,16 @@ jobs:
       # Step 5: Disable Code Signing for the Build
       - name: Disable Code Signing in Xcode
         run: |
-          # Go to the macOS build directory and disable code signing
-          cd macos
-          sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = NONE/' Runner.xcconfig
-          sed -i '' 's/PROVISIONING_PROFILE = .*/PROVISIONING_PROFILE = NONE/' Runner.xcconfig
-          cd ..
+          # Locate the Runner.xcconfig file
+          CONFIG_FILE=$(find macos -name "Runner.xcconfig" | head -n 1)
+           if [ -z "$CONFIG_FILE" ]; then
+            echo "Error: Runner.xcconfig file not found"
+            exit 1
+          fi
+
+          echo "Updating code signing settings in $CONFIG_FILE"
+          sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = NONE/' "$CONFIG_FILE"
+          sed -i '' 's/PROVISIONING_PROFILE = .*/PROVISIONING_PROFILE = NONE/' "$CONFIG_FILE"
           
       # Step 6: Build the macOS app without code-signing
       - name: Build macOS App Without Code Signing
