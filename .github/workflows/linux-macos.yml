@@ -59,6 +59,13 @@ jobs:
       - name: Build Linux App
         run: flutter build linux --release
 
+      - name: Check if Binary Exists
+        run: |
+          if [ ! -f "build/linux/x64/release/bundle/flutter_app" ]; then
+            echo "Error: Flutter app binary not found!"
+            exit 1
+          fi
+
       - name: Build .deb Package
         run: |
           VERSION=${GITHUB_REF_NAME#refs/tags/}
