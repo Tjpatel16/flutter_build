@@ -1,12 +1,13 @@
-name: Build and Release Linux Flutter App
+name: Build and Release Linux App (.deb and AppImage)
 
 on:
   push:
     tags:
-      - 'v*.*.*' # Trigger the workflow only when a tag like v1.0.3 is pushed
+      - 'v*.*.*' # Trigger the workflow only when a tag like v1.0.1 is pushed
 
 env:
   FLUTTER_VERSION: "3.24.5"
+  APP_NAME: "flutter_app" # Replace with your app's name
 
 jobs:
   build-linux:
@@ -22,12 +23,6 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Install Flutter Dependencies
-        run: flutter pub get
-
-      - name: Enable Linux Support
-        run: flutter config --enable-linux-desktop
-
       - name: Install Dependencies for Packaging
         run: |
           sudo apt update
@@ -36,7 +31,7 @@ jobs:
             ninja-build \
             libgtk-3-dev \
             liblzma-dev \
-            libpango1.0-0 \
+            libpango1.0-dev \
             libatk1.0-0 \
             libgdk-pixbuf2.0-0 \
             libgdk-pixbuf2.0-dev \
@@ -53,142 +48,61 @@ jobs:
             libxcomposite-dev \
             libxdamage-dev \
             libasound2-dev \
-            libgnomecanvas-2.0-0 \
             build-essential
 
-      - name: Build Linux App Without Code Signing
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Enable Linux Support
+        run: flutter config --enable-linux-desktop
+
+      - name: Build Linux App
         run: flutter build linux --release
 
-      - name: Debug Build Directory
+      - name: Build .deb Package
         run: |
-          echo "Contents of build/linux/x64/release/bundle:"
-          ls -la build/linux/x64/release/bundle
-
-      - name: Prepare .deb Package
-        id: prepare-deb
-        run: |
+          VERSION=${GITHUB_REF_NAME#refs/tags/}
           APP_NAME="flutter_app" # Replace with your app's name
-          VERSION="${{ github.ref_name }}"
-          
-          # Remove the 'v' prefix from the version if it exists
-          VERSION_NUMBER="${VERSION#v}"
-
-          BUILD_DIR="build/linux/x64/release/bundle"
-
-          if [ ! -d "$BUILD_DIR" ]; then
-            echo "Error: Build directory not found: $BUILD_DIR"
-            exit 1
-          fi
-
-          echo "Building .deb package for $APP_NAME version $VERSION_NUMBER"
-
-          # Create .deb package directory structure
           mkdir -p deb-package/DEBIAN
-          mkdir -p deb-package/usr/share/$APP_NAME
-          mkdir -p deb-package/usr/share/icons/hicolor/128x128/apps
-          mkdir -p deb-package/usr/share/applications
-
-          # Copy the app's binary and assets to the package structure
-          cp -r "$BUILD_DIR"/* deb-package/usr/share/$APP_NAME/
-
-          # Copy the app icon
-          cp assets/images/logo.png deb-package/usr/share/icons/hicolor/128x128/apps/$APP_NAME.png
-
-          # Create the app's desktop entry
-          cat <<EOF > deb-package/usr/share/applications/$APP_NAME.desktop
-          [Desktop Entry]
-          Name=Flutter App
-          Exec=/usr/share/$APP_NAME/$APP_NAME
-          Icon=$APP_NAME
-          Type=Application
-          Categories=Utility;
-          EOF
-
-          # Create DEBIAN control file
           cat <<EOF > deb-package/DEBIAN/control
           Package: $APP_NAME
-          Version: $VERSION_NUMBER
+          Version: $VERSION
           Architecture: amd64
-          Maintainer: Your Name <youremail@example.com>
-          Installed-Size: 1000
-          Depends: libgtk-3-0, libgdk-pixbuf2.0-0, libpango1.0-0, libatk1.0-0
-          Section: utils
-          Priority: optional
-          Description: A Flutter-based app
+          Maintainer: Your Name <your.email@example.com>
+          Description: A Flutter app for Linux
           EOF
-
-          # Build the .deb package
+          mkdir -p deb-package/usr/local/bin
+          cp build/linux/x64/release/bundle/flutter_app deb-package/usr/local/bin/
           dpkg-deb --build deb-package
+          mv deb-package.deb flutter-app-${VERSION}.deb
 
-          # Rename the .deb package
-          mv deb-package.deb "flutter-build-linux-${VERSION_NUMBER}.deb"
-
-      - name: Prepare AppImage Configuration
-        id: prepare-appimage
+      - name: Build AppImage
         run: |
+          VERSION=${GITHUB_REF_NAME#refs/tags/}
           APP_NAME="flutter_app" # Replace with your app's name
-          VERSION="${{ github.ref_name }}"
-          VERSION_NUMBER="${VERSION#v}"
+          mkdir -p appimage/AppDir/usr/bin
+          cp build/linux/x64/release/bundle/flutter_app appimage/AppDir/usr/bin/
+          wget -O appimage/AppDir/AppRun https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64
+          chmod +x appimage/AppDir/AppRun
+          wget -O appimage/AppDir/meta/gui/icon.png https://your-icon-url.png
+          appimagetool -n appimage/AppDir
+          mv *.AppImage flutter-app-${VERSION}.AppImage
 
-          BUILD_DIR="build/linux/x64/release/bundle"
-          
-          if [ ! -d "$BUILD_DIR" ]; then
-            echo "Error: Build directory not found: $BUILD_DIR"
-            exit 1
-          fi
-
-          echo "Building AppImage for $APP_NAME version $VERSION_NUMBER"
-
-          # Install dependencies for AppImage
-          sudo apt update
-          sudo apt install -y \
-            appimagetool \
-            wine \
-            fuse
-
-          # Create AppImage structure
-          mkdir -p appimage/$APP_NAME.AppDir/usr/bin
-          mkdir -p appimage/$APP_NAME.AppDir/usr/share/icons/hicolor/128x128/apps
-          mkdir -p appimage/$APP_NAME.AppDir/usr/share/applications
-
-          # Copy the app binary and assets to the AppImage directory
-          cp -r "$BUILD_DIR"/* appimage/$APP_NAME.AppDir/usr/bin/
-          cp assets/images/logo.png appimage/$APP_NAME.AppDir/usr/share/icons/hicolor/128x128/apps/$APP_NAME.png
-
-          # Create desktop entry for the AppImage
-          cat <<EOF > appimage/$APP_NAME.AppDir/usr/share/applications/$APP_NAME.desktop
-          [Desktop Entry]
-          Name=Flutter App
-          Exec=/$APP_NAME.AppDir/usr/bin/$APP_NAME
-          Icon=$APP_NAME
-          Type=Application
-          Categories=Utility;
-          EOF
-
-          # Make the AppImage executable
-          chmod +x appimage/$APP_NAME.AppDir/usr/bin/$APP_NAME
-
-          # Build the AppImage using appimagetool
-          appimagetool appimage/$APP_NAME.AppDir
-
-          # Rename the AppImage file
-          mv "$APP_NAME.AppImage" "flutter-build-linux-${VERSION_NUMBER}.AppImage"
-
-      - name: Upload Build Artifacts
+      - name: Upload Build Artifact (.deb)
         uses: actions/upload-artifact@v3
         with:
-          name: linux-builds
-          path: |
-            flutter-build-linux-${VERSION_NUMBER}.deb
-            flutter-build-linux-${VERSION_NUMBER}.AppImage
+          name: flutter-app-deb
+          path: flutter-app-${GITHUB_REF_NAME}.deb
+
+      - name: Upload Build Artifact (AppImage)
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-app-appimage
+          path: flutter-app-${GITHUB_REF_NAME}.AppImage
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: |
-            flutter-build-linux-${VERSION_NUMBER}.deb
-            flutter-build-linux-${VERSION_NUMBER}.AppImage
-          token: ${{ secrets.TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
           body: |
@@ -196,3 +110,7 @@ jobs:
             - Tag: ${{ github.ref_name }}
           draft: false
           prerelease: false
+          artifacts: |
+            flutter-app-${GITHUB_REF_NAME}.deb
+            flutter-app-${GITHUB_REF_NAME}.AppImage
+          token: ${{ secrets.GITHUB_TOKEN }}
