@@ -32,34 +32,29 @@ jobs:
         run: |
           cd macos
           pod install
-          cd ..
+
+      - name: Ensure Missing xcfilelist Files
+        run: |
+          mkdir -p macos/Flutter/ephemeral
+          touch macos/Flutter/ephemeral/FlutterInputs.xcfilelist
+          touch macos/Flutter/ephemeral/FlutterOutputs.xcfilelist
 
       - name: Disable Code Signing in Xcode
         run: |
-         # Locate Runner.xcodeproj
           PROJECT_FILE=$(find macos -name "Runner.xcodeproj" | head -n 1)
-
           if [ -z "$PROJECT_FILE" ]; then
             echo "Error: Runner.xcodeproj file not found"
             exit 1
           fi
 
-          echo "Found Runner.xcodeproj at $PROJECT_FILE"
-
-          # Navigate to the macOS directory
-          cd macos
-
-          # Disable code signing using xcodebuild
           echo "Disabling code signing for the macOS project..."
-          xcodebuild -project Runner.xcodeproj \
+          xcodebuild -project "$PROJECT_FILE" \
             -target Runner \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_ENTITLEMENTS="" \
             DEVELOPMENT_TEAM=""
 
-          cd ..
-          
       - name: Build macOS App Without Code Signing
         run: flutter build macos --release
 
@@ -71,9 +66,7 @@ jobs:
       - name: Prepare DMG Configuration
         id: prepare-dmg
         run: |
-          # Find the .app file in the build directory
           APP_PATH=$(find build/macos/Build/Products/Release -name "*.app" -type d | head -n 1)
-          
           if [ -z "$APP_PATH" ]; then
             echo "Error: .app file not found in build/macos/Build/Products/Release"
             exit 1
@@ -82,7 +75,6 @@ jobs:
           echo "Found .app file at $APP_PATH"
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
 
-          # Create the DMG configuration JSON file
           mkdir -p dmg-config
           cat <<EOF > dmg-config/dmg-config.json
           {
@@ -117,33 +109,27 @@ jobs:
 
       - name: Package DMG File
         run: |
-          # Ensure the .app file is found and passed correctly
-          echo "APP_PATH is '$APP_PATH'"
+          APP_PATH=$APP_PATH
           if [ ! -d "$APP_PATH" ]; then
-            echo "Error: The .app file at $APP_PATH does not exist"
+            echo "Error: .app file not found at $APP_PATH"
             exit 1
           fi
-          
-          # Debug the path and create the DMG file
-          echo "Running create-dmg with APP_PATH: '$APP_PATH'"
-          
-          # Run create-dmg command with correct APP_PATH
+
           create-dmg --config dmg-config/dmg-config.json --overwrite "$APP_PATH"
-          
-          # Ensure the output is renamed properly (in case of spaces)
-          mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
+
+          mv "Flutter App*.dmg" "flutter-build-macos-${{ github.ref_name }}.dmg"
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macos-dmg
-          path: "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
+          path: "flutter-build-macos-${{ github.ref_name }}.dmg"
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
-          token: ${{ secrets.TOKEN }}
+          artifacts: "flutter-build-macos-${{ github.ref_name }}.dmg"
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
           body: |
