@@ -49,12 +49,15 @@ jobs:
             libxdamage-dev \
             libasound2-dev \
             build-essential
+      
+      - name: Enable Flutter Desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Flutter clean
+        run: flutter clean
 
       - name: Install Flutter Dependencies
         run: flutter pub get
-
-      - name: Enable Linux Support
-        run: flutter config --enable-linux-desktop
 
       - name: Build Linux App
         run: flutter build linux --release
@@ -75,8 +78,8 @@ jobs:
           Package: $APP_NAME
           Version: $VERSION
           Architecture: amd64
-          Maintainer: Your Name <your.email@example.com>
-          Description: A Flutter app for Linux
+          Maintainer: Tejas Patel
+          Description: Build flutter app and change app icon
           EOF
           mkdir -p deb-package/usr/local/bin
           cp build/linux/x64/release/bundle/flutter_app deb-package/usr/local/bin/
