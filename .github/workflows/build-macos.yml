@@ -14,25 +14,26 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      # Step 3: Install Flutter dependencies
       - name: Install Flutter Dependencies
         run: flutter pub get
 
-      # Step 4: Enable macOS support
       - name: Enable macOS Support
         run: flutter config --enable-macos-desktop
 
-      # Step 5: Disable Code Signing for the Build
+      - name: Install CocoaPods Dependencies
+        run: |
+          cd macos
+          pod install
+          cd ..
+
       - name: Disable Code Signing in Xcode
         run: |
          # Locate Runner.xcodeproj
@@ -59,17 +60,14 @@ jobs:
 
           cd ..
           
-      # Step 6: Build the macOS app without code-signing
       - name: Build macOS App Without Code Signing
         run: flutter build macos --release
 
-      # Step 7: Debug the build directory
       - name: Debug Build Directory
         run: |
           echo "Contents of build/macos/Build/Products/Release:"
           ls -la build/macos/Build/Products/Release
 
-      # Step 8: Prepare DMG Configuration and Locate .app File
       - name: Prepare DMG Configuration
         id: prepare-dmg
         run: |
@@ -114,11 +112,9 @@ jobs:
           }
           EOF
 
-      # Step 9: Install the create-dmg tool
       - name: Install create-dmg
         run: npm install --global create-dmg
 
-      # Step 10: Package the DMG file
       - name: Package DMG File
         run: |
           # Ensure the .app file is found and passed correctly
@@ -137,14 +133,12 @@ jobs:
           # Ensure the output is renamed properly (in case of spaces)
           mv "Flutter App*.dmg" "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
-      # Step 11: Upload the DMG file as an artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macos-dmg
           path: "flutter-build-macos-${GITHUB_REF_NAME}.dmg"
 
-      # Step 12: Create a GitHub release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
