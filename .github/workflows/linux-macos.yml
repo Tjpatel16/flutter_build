@@ -7,7 +7,7 @@ on:
 
 env:
   FLUTTER_VERSION: "3.24.5"
-  APP_NAME: "flutter_app"
+  APP_NAME: "flutter-app"
 
 jobs:
   build:
