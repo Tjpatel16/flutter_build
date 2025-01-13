@@ -1,107 +1,61 @@
-name: Build and Release Linux App (.deb and AppImage)
+name: Build and Release Flutter App for Linux
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # Trigger the workflow only when a tag like v1.0.1 is pushed
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v1.1.0, etc.
 
 env:
   FLUTTER_VERSION: "3.24.5"
-  APP_NAME: "flutter_app"  # Replace with your app's name
+  APP_NAME: "flutter_app"
 
 jobs:
-  build-linux:
-    name: Build Linux App
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Install Dependencies for Packaging
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            cmake \
-            ninja-build \
-            libgtk-3-dev \
-            liblzma-dev \
-            libpango1.0-dev \
-            libatk1.0-0 \
-            libgdk-pixbuf2.0-0 \
-            libgdk-pixbuf2.0-dev \
-            libxcursor-dev \
-            libxrandr-dev \
-            libxss-dev \
-            libappindicator3-dev \
-            libgtksourceview-3.0-dev \
-            libnss3 \
-            libx11-xcb-dev \
-            libdbus-1-dev \
-            libgstreamer1.0-0 \
-            libgstreamer-plugins-base1.0-0 \
-            libxcomposite-dev \
-            libxdamage-dev \
-            libasound2-dev \
-            build-essential
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build pkg-config libgtk-3-dev dpkg-dev debhelper
 
-      - name: Enable Flutter Desktop
-        run: flutter config --enable-linux-desktop
+    - name: Install Flutter dependencies
+      run: |
+        flutter pub get
 
-      - name: Flutter clean
-        run: flutter clean
+    - name: Build Linux release
+      run: |
+        flutter build linux --release
 
-      - name: Install Flutter Dependencies
-        run: flutter pub get
+    - name: Build .deb package
+      run: |
+        cd build/linux/x64/release/bundle
+        mkdir -p ${{ env.APP_NAME }}.deb/DEBIAN
+        echo "Package: ${{ env.APP_NAME }}" > ${{ env.APP_NAME }}.deb/DEBIAN/control
+        echo "Version: ${{ github.ref_name }}" >> ${{ env.APP_NAME }}.deb/DEBIAN/control  # Version from the tag
+        echo "Architecture: amd64" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
+        echo "Maintainer: Your Name <youremail@example.com>" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
+        echo "Description: My Flutter App" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
+        dpkg-deb --build ${{ env.APP_NAME }}.deb
 
-      - name: Build Linux App
-        run: flutter build linux --release
+    - name: Build AppImage
+      run: |
+        sudo apt-get install -y appimagetool
+        appimagetool -n build/linux/x64/release/bundle ${{ env.APP_NAME }}.AppImage
 
-      - name: Check if Binary Exists
-        run: |
-          if [ ! -f "build/linux/x64/release/bundle/flutter_app" ]; then
-            echo "Error: Flutter app binary not found!"
-            exit 1
-          fi
-
-      - name: Build .deb Package (ARM64)
-        run: |
-          VERSION=${GITHUB_REF_NAME#refs/tags/}
-          APP_NAME="flutter_app"  # Replace with your app's name
-          mkdir -p deb-package/DEBIAN
-          cat <<EOF > deb-package/DEBIAN/control
-          Package: $APP_NAME
-          Version: $VERSION
-          Architecture: arm64
-          Maintainer: Tejas Patel
-          Description: Build flutter app and change app icon
-          EOF
-          mkdir -p deb-package/usr/local/bin
-          cp -r build/linux/x64/release/bundle/* deb-package/usr/local/bin/
-          dpkg-deb --build deb-package
-          mv deb-package.deb flutter-app-${VERSION}-arm64.deb
-
-      - name: Upload Build Artifact (.deb)
-        uses: actions/upload-artifact@v3
-        with:
-          name: flutter-app-deb-arm64
-          path: flutter-app-${GITHUB_REF_NAME}-arm64.deb
-
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref_name }}
-          name: "Release ${{ github.ref_name }}"
-          body: |
-            This release includes the ARM64 build of the Flutter app.
-            - Tag: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          artifacts: |
-            flutter-app-${GITHUB_REF_NAME}-arm64.deb
-          token: ${{ secrets.TOKEN }}
+    - name: Upload .deb and AppImage to GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          build/linux/x64/release/bundle/${{ env.APP_NAME }}.deb
+          build/linux/x64/release/bundle/${{ env.APP_NAME }}.AppImage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
