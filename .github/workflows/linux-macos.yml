@@ -58,6 +58,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          build/linux/x64/release/bundle/${PACKAGE_NAME}.deb
+          build/linux/x64/release/bundle/*.deb
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
