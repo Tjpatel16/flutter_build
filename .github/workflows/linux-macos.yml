@@ -3,11 +3,11 @@ name: Build and Release Linux App (.deb and AppImage)
 on:
   push:
     tags:
-      - 'v*.*.*' # Trigger the workflow only when a tag like v1.0.1 is pushed
+      - 'v*.*.*'  # Trigger the workflow only when a tag like v1.0.1 is pushed
 
 env:
   FLUTTER_VERSION: "3.24.5"
-  APP_NAME: "flutter_app" # Replace with your app's name
+  APP_NAME: "flutter_app"  # Replace with your app's name
 
 jobs:
   build-linux:
@@ -62,47 +62,35 @@ jobs:
       - name: Build Linux App
         run: flutter build linux --release
 
-      - name: Build .deb Package
+      - name: Check if Binary Exists
+        run: |
+          if [ ! -f "build/linux/x64/release/bundle/flutter_app" ]; then
+            echo "Error: Flutter app binary not found!"
+            exit 1
+          fi
+
+      - name: Build .deb Package (ARM64)
         run: |
           VERSION=${GITHUB_REF_NAME#refs/tags/}
-          APP_NAME=${{ env.APP_NAME }}
+          APP_NAME="flutter_app"  # Replace with your app's name
           mkdir -p deb-package/DEBIAN
           cat <<EOF > deb-package/DEBIAN/control
           Package: $APP_NAME
           Version: $VERSION
-          Architecture: amd64
+          Architecture: arm64
           Maintainer: Tejas Patel
           Description: Build flutter app and change app icon
           EOF
           mkdir -p deb-package/usr/local/bin
-          cp -r build/linux/x64/release/bundle/${{ env.APP_NAME }} deb-package/usr/local/bin/
+          cp -r build/linux/arm64/release/bundle/flutter_app deb-package/usr/local/bin/
           dpkg-deb --build deb-package
-          mv deb-package.deb $APP_NAME-${VERSION}.deb
-
-      - name: Build AppImage
-        run: |
-          VERSION=${GITHUB_REF_NAME#refs/tags/}
-          APP_NAME=${{ env.APP_NAME }}
-          mkdir -p appimage/AppDir/usr/bin
-          cp -r build/linux/x64/release/bundle/$APP_NAME appimage/AppDir/usr/bin/
-          wget -O appimage/AppDir/AppRun https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64
-          chmod +x appimage/AppDir/AppRun
-          mkdir -p appimage/AppDir/meta/gui
-          cp assets/images/logo.png appimage/AppDir/meta/gui/icon.png
-          appimagetool -n appimage/AppDir
-          mv *.AppImage $APP_NAME-${VERSION}.AppImage
+          mv deb-package.deb flutter-app-${VERSION}-arm64.deb
 
       - name: Upload Build Artifact (.deb)
         uses: actions/upload-artifact@v3
         with:
-          name: flutter-app-deb
-          path: flutter-app-${GITHUB_REF_NAME}.deb
-
-      - name: Upload Build Artifact (AppImage)
-        uses: actions/upload-artifact@v3
-        with:
-          name: flutter-app-appimage
-          path: flutter-app-${GITHUB_REF_NAME}.AppImage
+          name: flutter-app-deb-arm64
+          path: flutter-app-${GITHUB_REF_NAME}-arm64.deb
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -110,11 +98,10 @@ jobs:
           tag: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
           body: |
-            This release includes the Linux build of the Flutter app.
+            This release includes the ARM64 build of the Flutter app.
             - Tag: ${{ github.ref_name }}
           draft: false
           prerelease: false
           artifacts: |
-            flutter-app-${GITHUB_REF_NAME}.deb
-            flutter-app-${GITHUB_REF_NAME}.AppImage
+            flutter-app-${GITHUB_REF_NAME}-arm64.deb
           token: ${{ secrets.TOKEN }}
