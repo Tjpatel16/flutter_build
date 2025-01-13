@@ -38,15 +38,16 @@ jobs:
     - name: Build .deb package
       run: |
         cd build/linux/x64/release/bundle
-        mkdir -p ${{ env.APP_NAME }}.deb/DEBIAN
-        VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')  # Remove leading 'v' from the version
-        APP_NAME_SANITIZED=$(echo ${{ env.APP_NAME }} | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')  # Convert to lowercase and remove spaces
-        echo "Package: $APP_NAME_SANITIZED" > $APP_NAME_SANITIZED.deb/DEBIAN/control
-        echo "Version: $VERSION" >> $APP_NAME_SANITIZED.deb/DEBIAN/control  # Use modified version
-        echo "Architecture: amd64" >> $APP_NAME_SANITIZED.deb/DEBIAN/control
-        echo "Maintainer: Your Name <youremail@example.com>" >> $APP_NAME_SANITIZED.deb/DEBIAN/control
-        echo "Description: My Flutter App" >> $APP_NAME_SANITIZED.deb/DEBIAN/control
-        dpkg-deb --build $APP_NAME_SANITIZED.deb
+        VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
+        APP_NAME_SANITIZED=$(echo ${{ env.APP_NAME }} | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+        DEB_DIR="${APP_NAME_SANITIZED}_deb"
+        mkdir -p $DEB_DIR/DEBIAN
+        echo "Package: $APP_NAME_SANITIZED" > $DEB_DIR/DEBIAN/control
+        echo "Version: $VERSION" >> $DEB_DIR/DEBIAN/control  # Use modified version
+        echo "Architecture: amd64" >> $DEB_DIR/DEBIAN/control
+        echo "Maintainer: Your Name <youremail@example.com>" >> $DEB_DIR/DEBIAN/control
+        echo "Description: My Flutter App" >> $DEB_DIR/DEBIAN/control
+        dpkg-deb --build $DEB_DIR
 
     - name: Build AppImage
       run: |
