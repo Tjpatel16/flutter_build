@@ -50,7 +50,7 @@ jobs:
         echo "Package: ${APP_NAME}-linux-x64" > $DEB_DIR/DEBIAN/control
         echo "Version: ${VERSION}" >> $DEB_DIR/DEBIAN/control
         echo "Architecture: amd64" >> $DEB_DIR/DEBIAN/control
-        echo Tejas Patel >> $DEB_DIR/DEBIAN/control
+        echo "Tejas Patel" >> $DEB_DIR/DEBIAN/control
         echo "Description: My Flutter Build Linux App" >> $DEB_DIR/DEBIAN/control
         dpkg-deb --build $DEB_DIR
         mv $DEB_DIR.deb ${PACKAGE_NAME}.deb
