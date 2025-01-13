@@ -35,24 +35,30 @@ jobs:
       run: |
         flutter build linux --release
 
-    - name: Build .deb package
+    - name: Build .deb x64 package
       run: |
         cd build/linux/x64/release/bundle
         VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
-        APP_NAME_SANITIZED=$(echo ${{ env.APP_NAME }} | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]' | tr -d '.')
-        DEB_DIR="${APP_NAME_SANITIZED}_deb"
+        APP_NAME=${{ env.APP_NAME }}
+        PACKAGE_NAME="${APP_NAME}-linux-x64-${VERSION}"
+        DEB_DIR="${PACKAGE_NAME}_deb"
         mkdir -p $DEB_DIR/DEBIAN
-        echo "Package: $APP_NAME_SANITIZED" > $DEB_DIR/DEBIAN/control
-        echo "Version: $VERSION" >> $DEB_DIR/DEBIAN/control
+        echo "Package: ${APP_NAME}-linux-x64" > $DEB_DIR/DEBIAN/control
+        echo "Version: ${VERSION}" >> $DEB_DIR/DEBIAN/control
         echo "Architecture: amd64" >> $DEB_DIR/DEBIAN/control
         echo "Maintainer: Your Name <youremail@example.com>" >> $DEB_DIR/DEBIAN/control
-        echo "Description: My Flutter App" >> $DEB_DIR/DEBIAN/control
+        echo "Description: My Flutter Build Linux App" >> $DEB_DIR/DEBIAN/control
         dpkg-deb --build $DEB_DIR
+        mv $DEB_DIR.deb ${PACKAGE_NAME}.deb
 
     - name: Build AppImage
       run: |
         sudo apt-get install -y appimagetool
-        appimagetool -n build/linux/x64/release/bundle ${{ env.APP_NAME }}.AppImage
+        VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
+        APP_NAME=${{ env.APP_NAME }}
+        APPIMAGE_NAME="${APP_NAME}-linux-x64-${VERSION}.AppImage"
+        appimagetool -n build/linux/x64/release/bundle $APPIMAGE_NAME
+        mv $APPIMAGE_NAME ${{ github.workspace }}/$APPIMAGE_NAME
 
     - name: Upload .deb and AppImage to GitHub release
       uses: softprops/action-gh-release@v1
