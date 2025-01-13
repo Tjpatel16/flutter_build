@@ -53,7 +53,6 @@ jobs:
         echo "Maintainer: Tejas Patel" >> $DEB_DIR/DEBIAN/control
         echo "Description: My Flutter Build Linux App" >> $DEB_DIR/DEBIAN/control
         dpkg-deb --build $DEB_DIR
-        mv $DEB_DIR.deb ${PACKAGE_NAME}.deb
 
     - name: Upload .deb and AppImage to GitHub release
       uses: softprops/action-gh-release@v1
