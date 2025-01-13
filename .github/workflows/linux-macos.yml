@@ -64,8 +64,10 @@ jobs:
 
       - name: Check if Binary Exists
         run: |
-          if [ ! -f "build/linux/x64/release/bundle/flutter_app" ]; then
-            echo "Error: Flutter app binary not found!"
+          echo "Listing build directory:"
+          ls -R build/linux/x64/release
+          if [ ! -f "build/linux/x64/release/bundle/${{ env.APP_NAME }}" ]; then
+            echo "Error: Flutter app binary not found in build directory!"
             exit 1
           fi
 
