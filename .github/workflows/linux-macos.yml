@@ -39,8 +39,9 @@ jobs:
       run: |
         cd build/linux/x64/release/bundle
         mkdir -p ${{ env.APP_NAME }}.deb/DEBIAN
+        VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')  # Remove leading 'v' from the version
         echo "Package: ${{ env.APP_NAME }}" > ${{ env.APP_NAME }}.deb/DEBIAN/control
-        echo "Version: ${{ github.ref_name }}" >> ${{ env.APP_NAME }}.deb/DEBIAN/control  # Version from the tag
+        echo "Version: $VERSION" >> ${{ env.APP_NAME }}.deb/DEBIAN/control  # Use modified version
         echo "Architecture: amd64" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
         echo "Maintainer: Your Name <youremail@example.com>" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
         echo "Description: My Flutter App" >> ${{ env.APP_NAME }}.deb/DEBIAN/control
@@ -58,4 +59,4 @@ jobs:
           build/linux/x64/release/bundle/${{ env.APP_NAME }}.deb
           build/linux/x64/release/bundle/${{ env.APP_NAME }}.AppImage
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
