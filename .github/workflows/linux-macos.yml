@@ -82,7 +82,7 @@ jobs:
           Description: Build flutter app and change app icon
           EOF
           mkdir -p deb-package/usr/local/bin
-          cp -r build/linux/arm64/release/bundle/flutter_app deb-package/usr/local/bin/
+          cp -r build/linux/x64/release/bundle/* deb-package/usr/local/bin/
           dpkg-deb --build deb-package
           mv deb-package.deb flutter-app-${VERSION}-arm64.deb
 
