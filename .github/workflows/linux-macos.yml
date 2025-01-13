@@ -62,19 +62,10 @@ jobs:
       - name: Build Linux App
         run: flutter build linux --release
 
-      - name: Check if Binary Exists
-        run: |
-          echo "Listing build directory:"
-          ls -R build/linux/x64/release
-          if [ ! -f "build/linux/x64/release/bundle/${{ env.APP_NAME }}" ]; then
-            echo "Error: Flutter app binary not found in build directory!"
-            exit 1
-          fi
-
       - name: Build .deb Package
         run: |
           VERSION=${GITHUB_REF_NAME#refs/tags/}
-          APP_NAME="flutter_app" # Replace with your app's name
+          APP_NAME=${{ env.APP_NAME }}
           mkdir -p deb-package/DEBIAN
           cat <<EOF > deb-package/DEBIAN/control
           Package: $APP_NAME
@@ -84,21 +75,22 @@ jobs:
           Description: Build flutter app and change app icon
           EOF
           mkdir -p deb-package/usr/local/bin
-          cp build/linux/x64/release/bundle/flutter_app deb-package/usr/local/bin/
+          cp -r build/linux/x64/release/bundle/$APP_NAME deb-package/usr/local/bin/
           dpkg-deb --build deb-package
-          mv deb-package.deb flutter-app-${VERSION}.deb
+          mv deb-package.deb $APP_NAME-${VERSION}.deb
 
       - name: Build AppImage
         run: |
           VERSION=${GITHUB_REF_NAME#refs/tags/}
-          APP_NAME="flutter_app" # Replace with your app's name
+          APP_NAME=${{ env.APP_NAME }}
           mkdir -p appimage/AppDir/usr/bin
-          cp build/linux/x64/release/bundle/flutter_app appimage/AppDir/usr/bin/
+          cp -r build/linux/x64/release/bundle/$APP_NAME appimage/AppDir/usr/bin/
           wget -O appimage/AppDir/AppRun https://github.com/AppImage/AppImageKit/releases/download/continuous/AppRun-x86_64
           chmod +x appimage/AppDir/AppRun
-          wget -O appimage/AppDir/meta/gui/icon.png https://your-icon-url.png
+          mkdir -p appimage/AppDir/meta/gui
+          cp assets/images/logo.png appimage/AppDir/meta/gui/icon.png
           appimagetool -n appimage/AppDir
-          mv *.AppImage flutter-app-${VERSION}.AppImage
+          mv *.AppImage $APP_NAME-${VERSION}.AppImage
 
       - name: Upload Build Artifact (.deb)
         uses: actions/upload-artifact@v3
