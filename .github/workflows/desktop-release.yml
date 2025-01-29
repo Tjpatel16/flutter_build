@@ -21,6 +21,9 @@ jobs:
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
 
+    - name: Enable dart_distributor
+        run: dart pub global activate flutter_distributor
+    
     - name: Install Linux dependencies
       run: |
         sudo apt-get update
@@ -58,7 +61,10 @@ jobs:
         $installerPath = "$env:RUNNER_TEMP\innosetup.exe"
         Invoke-WebRequest -Uri $innosetupUrl -OutFile $installerPath
         Start-Process -FilePath $installerPath -Args "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-" -Wait
-
+      
+    - name: Enable dart_distributor
+        run: dart pub global activate flutter_distributor
+    
     - name: Build Windows executable
       run: |
         flutter pub get
@@ -85,6 +91,9 @@ jobs:
     - name: Install create-dmg
       run: brew install create-dmg
 
+    - name: Enable dart_distributor
+        run: dart pub global activate flutter_distributor
+    
     - name: Add dependency_overrides to pubspec.yaml
       run: |
         echo "dependency_overrides:" >> pubspec.yaml
