@@ -1,0 +1,41 @@
+variables:
+  app_name: "Your App Name"  # Replace with your actual app name
+  version: "1.0.0"           # This will be automatically replaced by CI
+
+output: dist/
+releases:
+  - name: linux-deb
+    platform: linux
+    target: deb
+    build_args:
+      build_type: release
+      target: linux
+    input: build/linux/x64/release/bundle
+    output: "{{app_name}}-{{version}}-linux-x64.deb"
+
+  - name: linux-appimage
+    platform: linux
+    target: appimage
+    build_args:
+      build_type: release
+      target: linux
+    input: build/linux/x64/release/bundle
+    output: "{{app_name}}-{{version}}-linux-x64.AppImage"
+
+  - name: windows-exe
+    platform: windows
+    target: exe
+    build_args:
+      build_type: release
+      target: windows
+    input: build/windows/runner/Release
+    output: "{{app_name}}-{{version}}-windows-x64-setup.exe"
+
+  - name: macos-dmg
+    platform: macos
+    target: dmg
+    build_args:
+      build_type: release
+      target: macos
+    input: build/macos/Build/Products/Release
+    output: "{{app_name}}-{{version}}-macos-x64.dmg"
