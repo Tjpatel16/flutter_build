@@ -22,7 +22,7 @@ jobs:
         flutter-version: ${{ env.FLUTTER_VERSION }}
 
     - name: Enable dart_distributor
-        run: dart pub global activate flutter_distributor
+      run: dart pub global activate flutter_distributor
     
     - name: Install Linux dependencies
       run: |
@@ -63,7 +63,7 @@ jobs:
         Start-Process -FilePath $installerPath -Args "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-" -Wait
       
     - name: Enable dart_distributor
-        run: dart pub global activate flutter_distributor
+      run: dart pub global activate flutter_distributor
     
     - name: Build Windows executable
       run: |
@@ -92,7 +92,7 @@ jobs:
       run: brew install create-dmg
 
     - name: Enable dart_distributor
-        run: dart pub global activate flutter_distributor
+      run: dart pub global activate flutter_distributor
     
     - name: Add dependency_overrides to pubspec.yaml
       run: |
